@@ -1,4 +1,4 @@
-import { ABI } from '@shazow/whatsabi/lib.types/abi';
+import type { abi } from '@shazow/whatsabi';
 import { toast } from 'sonner';
 import { GetAccountResult } from 'tevm';
 import { Address } from 'tevm/utils';
@@ -9,6 +9,8 @@ import { UpdateAccountOptions } from '@/lib/types/config';
 import { DEFAULT_CALLER } from '@/lib/constants/defaults';
 import { TEVM_PREFIX } from '@/lib/local-storage';
 import { fetchAbi } from '@/lib/whatsabi';
+
+type ABI = abi.ABI;
 
 /* ---------------------------------- TYPES --------------------------------- */
 type ConfigInitialState = {

@@ -27,7 +27,7 @@ export const useTransactionToasts = () => {
 
           case 'optimistic': {
             if (existingToastId) {
-              const description = 'hash' in progress
+              const description = progress.hash
                 ? `Waiting for confirmation... (${progress.hash.slice(0, 8)}...)`
                 : 'Waiting for confirmation...'
 
@@ -78,7 +78,9 @@ export const useTransactionToasts = () => {
 
     return () => {
       unsubscribe()
-      activeToasts.current.forEach((toastId) => toast.dismiss(toastId))
+      activeToasts.current.forEach((toastId) => {
+        toast.dismiss(toastId)
+      })
       activeToasts.current.clear()
     }
   }, [optimisticWrapper?.subscribeTx])

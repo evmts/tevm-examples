@@ -9,12 +9,9 @@ src = "src"
 test = "test"
 out = "out"
 allow_paths = [
-  # pnpm symlinks to the project root's node_modules
-  "../../node_modules",
-  # template uses linked mud packages from within the mud monorepo
-  "../../../../packages",
-  # projects created from this template and using linked mud packages
-  "../../../mud/packages",
+  # pnpm links package dependencies here and keeps the shared store at the workspace root.
+  "./node_modules",
+  "../../../../node_modules",
 ]
 extra_output_files = [
   "abi",

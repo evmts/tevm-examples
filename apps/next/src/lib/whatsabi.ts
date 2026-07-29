@@ -1,8 +1,10 @@
-import { ABI } from '@shazow/whatsabi/lib.types/abi';
+import type { abi } from '@shazow/whatsabi';
 import { Address } from 'tevm/utils';
 
 import { Chain } from '@/lib/types/providers';
 import { getFunctionName } from '@/lib/utils';
+
+type ABI = abi.ABI;
 
 /* ---------------------------------- TYPES --------------------------------- */
 /**

@@ -1,4 +1,4 @@
-import { ABIFunction } from '@shazow/whatsabi/lib.types/abi';
+import type { abi } from '@shazow/whatsabi';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -6,6 +6,8 @@ import { TxEntry } from '@/lib/types/tx';
 import { TEVM_PREFIX } from '@/lib/local-storage';
 
 import { getFunctionId } from '../utils';
+
+type ABIFunction = abi.ABIFunction;
 
 /* ---------------------------------- TYPES --------------------------------- */
 // Input values

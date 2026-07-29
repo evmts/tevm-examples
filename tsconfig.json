@@ -1,0 +1,4 @@
+{
+	"extends": "@tevm/tsconfig/base.json",
+	"files": []
+}

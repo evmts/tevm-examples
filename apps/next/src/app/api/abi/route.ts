@@ -2,7 +2,7 @@ import { autoload, loaders } from '@shazow/whatsabi';
 
 import { CHAINS } from '@/lib/constants/providers';
 
-const { EtherscanABILoader, MultiABILoader, SourcifyABILoader } = loaders;
+const { EtherscanV1ABILoader, MultiABILoader, SourcifyABILoader } = loaders;
 
 // The env key for any Etherscan compatible API key, to be parsed inside the api route
 // See `Chain.blockExplorers.default.apiUrl` for the base URL
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
   // We can't use the default ABI loader as it doesn't specify the chain id to the loaders
   const loaders = [
     new SourcifyABILoader({ chainId }),
-    new EtherscanABILoader({
+    new EtherscanV1ABILoader({
       baseURL: apiUrl,
       // If the key is there, there is an Etherscan-compatible explorer
       // Whether an api key was fed to the environment or not (default ''), it will

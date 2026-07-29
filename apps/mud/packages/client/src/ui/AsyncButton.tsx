@@ -9,7 +9,7 @@ export type Props = AsyncButtonProps & DetailedHTMLProps<ButtonHTMLAttributes<HT
 export const AsyncButton = ({ pending, type, disabled, onClick, ...props }: Props) => {
   // TODO: move all this logic into a hook so we can wrap other event handlers
 
-  const promiseRef = useRef<Promise<unknown>>();
+  const promiseRef = useRef<Promise<unknown> | undefined>(undefined);
   const [promisePending, setPromisePending] = useState<true | undefined>(undefined);
 
   const asyncOnClick = useCallback<MouseEventHandler<HTMLButtonElement>>(

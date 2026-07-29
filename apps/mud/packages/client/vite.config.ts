@@ -8,5 +8,9 @@ export default defineConfig({
     target: "es2022",
     minify: true,
     sourcemap: true,
+    // @tevm/mud has not reached npm yet. Keep its runtime imports external until the first release.
+    rollupOptions: {
+      external: [/^@tevm\/mud(?:\/.*)?$/],
+    },
   },
 });

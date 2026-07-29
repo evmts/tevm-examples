@@ -7,14 +7,15 @@
 		"0xpolarzero"
 	],
 	"scripts": {
-		"//typecheck": "tsc --noEmit",
-		"all": "bun run format && bun run lint && bun run typecheck && bun run build",
-		"build": "next build",
+		"all": "pnpm run format:check && pnpm run typecheck && pnpm run build && pnpm run test",
+		"build": "next build --webpack",
 		"clean": "rm -rf .next",
 		"dev": "next dev",
 		"format": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
 		"format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
-		"start": "next start"
+		"start": "next start",
+		"test": "vitest run --passWithNoTests",
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@radix-ui/react-accordion": "^1.2.12",
@@ -32,7 +33,7 @@
 		"@radix-ui/react-tooltip": "^1.2.8",
 		"@shazow/whatsabi": "^0.26.0",
 		"@tanstack/react-table": "^8.21.3",
-		"@tevm/jsonrpc": "workspace:^",
+		"@tevm/jsonrpc": "^1.0.0-next.148",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"cmdk": "^1.1.1",
@@ -45,9 +46,8 @@
 		"sonner": "^2.0.7",
 		"tailwind-merge": "^3.6.0",
 		"tailwindcss-animate": "^1.0.7",
-		"tevm": "workspace:^",
 		"vaul": "^1.1.2",
-		"viem": "^2.49.3",
+		"viem": "~2.37.13",
 		"web-streams-polyfill": "^4.3.0",
 		"zustand": "5.0.13"
 	},
@@ -60,7 +60,16 @@
 		"postcss": "^8.5.14",
 		"prettier": "^3.8.3",
 		"prettier-plugin-tailwindcss": "^0.8.0",
-		"tailwindcss": "^4.3.0",
-		"typescript": "^6.0.3"
+		"tailwindcss": "^3.4.19",
+		"tevm": "^1.0.0-next.149",
+		"typescript": "^6.0.3",
+		"vitest": "^4.1.6"
+	},
+	"peerDependencies": {
+		"tevm": ">=1.0.0"
+	},
+	"publishConfig": {
+		"access": "public",
+		"provenance": true
 	}
 }

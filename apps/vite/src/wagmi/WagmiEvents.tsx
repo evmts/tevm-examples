@@ -26,7 +26,7 @@ export const WagmiEvents = () => {
 	useContractEvent({
 		...transferEvents,
 		address: addresses[420],
-		listener: (event) => {
+		listener: (event: unknown) => {
 			setEvents([...events, event])
 		},
 	})

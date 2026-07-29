@@ -8,7 +8,7 @@ import {
   useState,
   type FC,
 } from 'react';
-import type { ABI, ABIFunction } from '@shazow/whatsabi/lib.types/abi';
+import type { abi } from '@shazow/whatsabi';
 import {
   getCoreRowModel,
   getFilteredRowModel,
@@ -33,6 +33,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
+
+type ABI = abi.ABI;
+type ABIFunction = abi.ABIFunction;
 import { Icons } from '@/components/common/icons';
 import TooltipResponsive from '@/components/common/tooltip-responsive';
 import { DataTableColumnHeader } from '@/components/templates/table/column-header';

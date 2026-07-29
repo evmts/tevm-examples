@@ -26,7 +26,7 @@ export const WagmiWrites = () => {
 
 	useWaitForTransaction({
 		hash: mintData?.hash,
-		onSuccess: (receipt) => {
+		onSuccess: (receipt: unknown) => {
 			console.log('minted', receipt)
 			refetch()
 		},

@@ -1,9 +1,12 @@
-import { ABI, ABIFunction } from '@shazow/whatsabi/lib.types/abi';
+import type { abi } from '@shazow/whatsabi';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { getAddress, Hex, isHex } from 'tevm/utils';
 
 import { ExpectedType } from '@/lib/types/tx';
+
+type ABI = abi.ABI;
+type ABIFunction = abi.ABIFunction;
 
 /* -------------------------------------------------------------------------- */
 /*                                MISCELLANEOUS                               */

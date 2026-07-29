@@ -27,7 +27,6 @@ function OptimisticEntryKitProvider({ children }: { children: ReactNode }) {
     sync={{ startBlock }}
     loggingLevel="debug"
   >
-    {/* @ts-expect-error - react versions mismatch */}
     {children}
   </OptimisticWrapperProvider>
 }

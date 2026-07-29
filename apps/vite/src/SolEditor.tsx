@@ -72,7 +72,7 @@ contract AddNumbers {
 		data: artifacts,
 		isLoading,
 		error,
-	} = useQuery({
+	} = useQuery<MessageResult, Error>({
 		queryKey: ['artifacts', code],
 		queryFn: () => solcWorkerCompile(worker, code) as Promise<MessageResult>,
 	})
@@ -93,7 +93,7 @@ contract AddNumbers {
 			<h3>Tevm compiler</h3>
 			<p>
 				The Tevm compiler will compile the above solidity contract into the following artifacts using{' '}
-				<a href="https://github.com/evmts/tevm-monorepo/blob/main/bundler/solc/docs/modules/solc.md#solccompile">
+				<a href="https://www.npmjs.com/package/@tevm/solc">
 					import("@tevm/solc").solcCompile
 				</a>{' '}
 				which is just a typesafe wrapper around{' '}

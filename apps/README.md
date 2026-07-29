@@ -1,15 +1,10 @@
-# examples/
+# Apps
 
-Example apps for Tevm
+Example applications for Tevm. Each app has its own README and consumes Tevm packages from npm.
 
-## [examples/esbuild/](/examples/esbuild/)
-
-[esbuild](https://esbuild.dev/) based example app using viem
-
-## [examples/next/](/examples/next)
-
-[NEXT.js](https://nextjs.org/) example app using wagmi
-
-## [examples/vite/](/examples/vite)
-
-[Vite](https://vitejs.dev/) based example app using wagmi and React
+- [Bun](./bun)
+- [esbuild](./esbuild)
+- [MUD](./mud)
+- [Next.js](./next)
+- [SvelteKit and Ethers](./svelte-ethers)
+- [Vite and React](./vite)

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { use, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { isAddress, type Address } from 'tevm/utils';
 
@@ -22,8 +22,10 @@ const TxHistory = dynamic(() => import('@/components/core/tx-history'));
 export default function AccountPage({
   params,
 }: {
-  params: { account: string };
+  params: Promise<{ account: string }>;
 }) {
+  const { account: routeAccount } = use(params);
+
   // The chain and corresponding client
   const { chain, client } = useProviderStore((state) => ({
     chain: state.chain,
@@ -41,19 +43,19 @@ export default function AccountPage({
     if (
       client &&
       account &&
-      isAddress(params.account) &&
-      account.address !== params.account
+      isAddress(routeAccount) &&
+      account.address !== routeAccount
     )
-      updateAccount(params.account as Address, {
+      updateAccount(routeAccount as Address, {
         updateAbi: true,
         chain,
         client,
       });
-  }, [params.account, account, chain, client, updateAccount]);
+  }, [routeAccount, account, chain, client, updateAccount]);
 
   return (
     <div className="flex grow flex-col gap-4">
-      <Header initialAddress={params.account} />
+      <Header initialAddress={routeAccount} />
       <AccountState />
       <Interact />
 

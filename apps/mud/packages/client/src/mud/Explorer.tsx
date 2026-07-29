@@ -26,7 +26,13 @@ export function Explorer() {
           </>
         )}
       </button>
-      {open ? <iframe src={`${explorerUrl}/${worldAddress}`} className="bg-black h-[50vh]" /> : null}
+      {open ? (
+        <iframe
+          title="MUD world explorer"
+          src={`${explorerUrl}/${worldAddress}`}
+          className="bg-black h-[50vh]"
+        />
+      ) : null}
     </div>
   );
 }

@@ -1,0 +1,14 @@
+packages:
+  - apps/*
+  - apps/mud/packages/*
+
+onlyBuiltDependencies:
+  - "@biomejs/biome"
+  - "@swc/core"
+  - bufferutil
+  - esbuild
+  - fsevents
+  - keccak
+  - secp256k1
+  - sharp
+  - utf-8-validate

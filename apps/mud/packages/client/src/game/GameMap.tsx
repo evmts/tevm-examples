@@ -43,6 +43,7 @@ export function GameMap({ players = [], onMove }: Props) {
         {onMove
           ? mudConfig.enums.Direction.map((direction) => (
               <button
+                type="button"
                 key={direction}
                 title={`Move ${direction.toLowerCase()}`}
                 className={twMerge(
@@ -88,6 +89,7 @@ export function GameMap({ players = [], onMove }: Props) {
           ) : (
             <div className="absolute inset-0 grid place-items-center">
               <button
+                type="button"
                 className="group outline-0 p-4 border-4 border-green-400 transition ring-green-300 hover:ring-4 active:scale-95 rounded-lg text-lg font-medium aria-busy:pointer-events-none aria-busy:animate-pulse"
                 onClick={openAccountModal}
               >

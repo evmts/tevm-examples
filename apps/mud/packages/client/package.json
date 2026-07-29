@@ -8,30 +8,41 @@
     "build": "vite build",
     "dev": "vite",
     "preview": "vite preview",
-    "test": "tsc --noEmit"
+    "test": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@latticexyz/common": "2.2.21",
-    "@latticexyz/entrykit": "2.2.21",
-    "@latticexyz/explorer": "2.2.21",
-    "@latticexyz/react": "2.2.21",
-    "@latticexyz/schema-type": "2.2.21",
-    "@latticexyz/stash": "2.2.21",
-    "@latticexyz/store-sync": "2.2.21",
-    "@latticexyz/utils": "2.2.21",
-    "@latticexyz/world": "2.2.21",
+    "@latticexyz/common": "2.2.23",
+    "@latticexyz/entrykit": "2.2.23",
+    "@latticexyz/explorer": "2.2.23",
+    "@latticexyz/react": "2.2.23",
+    "@latticexyz/schema-type": "2.2.23",
+    "@latticexyz/stash": "2.2.23",
+    "@latticexyz/store-sync": "2.2.23",
+    "@latticexyz/utils": "2.2.23",
+    "@latticexyz/world": "2.2.23",
     "@tanstack/react-query": "^5.63.0",
+    "@wagmi/connectors": "5.1.10",
     "contracts": "workspace:*",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-error-boundary": "5.0.0",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^2.6.0",
     "viem": "^2.49.3",
     "wagmi": "2.12.11"
   },
+  "peerDependencies": {
+    "@tevm/mud": "^1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@tevm/mud": {
+      "optional": true
+    }
+  },
   "devDependencies": {
-    "@types/react": "18.2.22",
-    "@types/react-dom": "18.2.7",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "eslint-plugin-react": "7.31.11",
@@ -39,6 +50,10 @@
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "vite": "^6.0.7",
-    "vite-plugin-mud": "2.2.21"
+    "vite-plugin-mud": "2.2.23"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }

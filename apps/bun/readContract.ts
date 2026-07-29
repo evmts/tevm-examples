@@ -1,6 +1,7 @@
 import { ERC20 } from 'tevm/contract'
-import { http } from 'tevm/jsonrpc'
+import { http } from '@tevm/jsonrpc'
 import { createMemoryClient } from 'tevm/memory-client'
+import type { Address } from 'viem'
 
 // Default values that can be overridden
 const defaultAddress = '0x0000000000000000000000000000000000000000'
@@ -22,12 +23,19 @@ export const client = createMemoryClient({
  * @param functionName - Function to call (defaults to 'balanceOf')
  * @returns Promise with the contract call result
  */
+type ReadContractOptions = {
+	address?: Address
+	account?: Address
+	abi?: typeof ERC20.abi
+	functionName?: 'balanceOf'
+}
+
 export const readContract = async ({
 	address = defaultAddress,
 	account = defaultAccount,
 	abi = ERC20.abi,
 	functionName = 'balanceOf',
-} = {}) => {
+}: ReadContractOptions = {}) => {
 	return client.readContract({
 		address,
 		abi,

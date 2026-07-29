@@ -15,7 +15,7 @@ export type MessageResult = {
  */
 const devConsole = new Proxy(console, {
 	get(target, prop) {
-		if (process.env.NODE_ENV === 'development') {
+		if (import.meta.env.DEV) {
 			return target[prop as keyof typeof target]
 		}
 		return () => {}
