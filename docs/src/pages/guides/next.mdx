@@ -1,0 +1,76 @@
+---
+title: Next.js
+description: Running a Tevm memory client in the browser inside a Next.js app router application
+---
+
+# Next.js
+
+**Source:** [`apps/next`](https://github.com/evmts/tevm-examples/tree/main/apps/next) · **Package:** `@tevm/example-next`
+
+A "Etherscan meets Remix" application: fork any supported chain **in the browser**, search for a contract, recover its
+ABI, call it, and keep a local transaction history. It is the only app here that runs Tevm as a long-lived
+client-side EVM rather than as a build-time tool.
+
+## Run it
+
+```bash
+pnpm install
+pnpm --filter @tevm/example-next dev     # http://localhost:3000
+pnpm --filter @tevm/example-next build   # next build --webpack
+```
+
+## What it demonstrates
+
+- **A browser-resident forked EVM.** One memory client per chain, forked at the latest block.
+- **Persistence.** Clients and transaction history are synced to `localStorage` (via zustand), so a page reload keeps
+  your session. Re-forking resets both.
+- **ABI recovery.** [WhatsABI](https://github.com/shazow/whatsabi) (`@shazow/whatsabi`) reconstructs an interface for
+  contracts with no published ABI.
+- **Arbitrary low-level calls.** Send raw calldata and native value at an account, including impersonated callers and
+  `skipBalance`.
+
+## The pattern that matters: client-only Tevm
+
+A Tevm memory client cannot be created during server rendering — it holds EVM state and is hydrated from
+`localStorage`. Every component that touches it is loaded dynamically with SSR disabled:
+
+```tsx [src/app/page.tsx]
+'use client';
+
+import dynamic from 'next/dynamic';
+
+import About from '@/components/core/about';
+
+// Import dynamically to avoid SSR issues due to persisted state (see zustand stores)
+const Header = dynamic(() => import('@/components/core/header'));
+const TxHistory = dynamic(() => import('@/components/core/tx-history'));
+
+export default function Home() {
+  return (
+    <div className="flex grow flex-col gap-4">
+      <Header />
+      <About />
+      <TxHistory />
+    </div>
+  );
+}
+```
+
+Skipping this produces a hydration mismatch or a "window is not defined" crash the first time the store rehydrates.
+
+## Notable constraints
+
+:::warning
+This app is built with `next build --webpack`, not Turbopack, and it does **not** use the Tevm bundler plugin — it
+never imports a `.sol` file. If you want Solidity imports in Next.js, see [Solidity imports](/guides/solidity-imports)
+and pair them with a webpack-based Tevm plugin configuration.
+:::
+
+:::note
+Running Tevm in the browser means the RPC keys used for forking are exposed to the client. That is the tradeoff this
+app accepts to keep clients synced with `localStorage`; a production deployment should proxy RPC through a server
+route instead. WhatsABI also struggles with proxy contracts — the app does not follow implementation pointers.
+:::
+
+Its own `README.md` notes the TypeScript build was deprioritised in favour of the runtime behaviour; the app runs, and
+`pnpm test` passes with `--passWithNoTests`. Contributions to tighten it up are welcome.

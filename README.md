@@ -33,6 +33,17 @@ The apps live in [`apps/`](./apps/):
 - `svelte-ethers` — SvelteKit with the Tevm Ethers adapter
 - `vite` — Vite, React, Wagmi, Ethers, and Solidity imports
 
+## Documentation site
+
+The site published at [examples.tevm.sh](https://examples.tevm.sh) lives in [`docs/`](./docs) and is built with
+[Vocs](https://vocs.dev) 2.7.0.
+
+```sh
+pnpm docs:dev
+pnpm docs:build
+pnpm docs:preview
+```
+
 ## Validate the workspace
 
 ```sh

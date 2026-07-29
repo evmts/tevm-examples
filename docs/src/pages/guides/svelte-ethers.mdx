@@ -1,0 +1,96 @@
+---
+title: SvelteKit + Ethers
+description: Using the Tevm Ethers adapter and Solidity imports inside a SvelteKit app
+---
+
+# SvelteKit + Ethers
+
+**Source:** [`apps/svelte-ethers`](https://github.com/evmts/tevm-examples/tree/main/apps/svelte-ethers) · **Package:** `svelte-ethers`
+
+The smallest full-framework example: SvelteKit, a Solidity import, and `@tevm/ethers` — a drop-in `Contract` that
+takes its types from the compiled Solidity instead of from a hand-written interface.
+
+## Run it
+
+```bash
+pnpm install
+pnpm --filter svelte-ethers dev      # http://localhost:5173
+pnpm --filter svelte-ethers build
+pnpm --filter svelte-ethers check    # svelte-check
+```
+
+## Setup
+
+SvelteKit builds with Vite, so the Vite Tevm plugin is all that is needed:
+
+```js [vite.config.js]
+import { sveltekit } from '@sveltejs/kit/vite'
+import { vitePluginTevm } from '@tevm/vite-plugin'
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  plugins: [sveltekit(), vitePluginTevm({})],
+})
+```
+
+`src/solidity.d.ts` declares the `*.sol` module shape so `svelte-check` and plain `tsc` accept the import.
+
+## The page
+
+```svelte [src/routes/+page.svelte]
+<script>
+import { Contract } from '@tevm/ethers'
+import { JsonRpcProvider } from 'ethers'
+import { onMount } from 'svelte'
+import { writable } from 'svelte/store'
+import { addresses } from '../addresses'
+import { EthersMintExample } from '../contracts/EthersMintExample.sol'
+
+// Create stores for all reactive variables
+const totalSupply = writable('')
+const ownerOf = writable('')
+const balanceOf = writable('')
+
+const tokenId = BigInt('114511829')
+
+const provider = new JsonRpcProvider('https://goerli.optimism.io', 420)
+const ethersContract = new Contract(addresses[420], EthersMintExample.abi, provider)
+
+onMount(async () => {
+  totalSupply.set(await ethersContract.totalSupply())
+  ownerOf.set(await ethersContract.ownerOf(tokenId))
+  if ($ownerOf?.toString()) {
+    balanceOf.set(await ethersContract.balanceOf($ownerOf?.toString()))
+  }
+})
+</script>
+
+<h1>Welcome to SvelteKit</h1>
+<div>
+  <h3>totalSupply():</h3>
+  <div>{$totalSupply?.toString()}</div>
+  <h3>ownerOf():</h3>
+  <div>{$ownerOf?.toString()}</div>
+  <h3>balanceOf($address):</h3>
+  <div>{$balanceOf?.toString()}</div>
+</div>
+```
+
+## Why `Contract` from `@tevm/ethers`
+
+`@tevm/ethers` re-exports Ethers' `Contract` with the call signatures inferred from the ABI you pass. Because the ABI
+here comes from a Solidity import, `ethersContract.ownerOf(tokenId)` is checked end to end:
+call it with a `string` instead of a `bigint`, or misspell the method, and the build fails. Plain
+`ethers.Contract` types every method as `any`.
+
+Everything else — providers, signers, `BigInt` handling, event listeners — is unchanged Ethers v6.
+
+:::warning
+The page targets Optimism Goerli (chain id `420`), which has been shut down, so the reads will not resolve against a
+live endpoint. Repoint `addresses` and the `JsonRpcProvider` at a live chain to see values.
+:::
+
+:::note
+All work happens in `onMount`. The provider call is browser-only; doing it at module scope would run it during SSR
+where the ethers provider has no network to reach.
+:::

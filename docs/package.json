@@ -1,0 +1,28 @@
+{
+	"name": "@tevm/examples-docs",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Documentation site for the Tevm example applications, published at examples.tevm.sh",
+	"scripts": {
+		"build": "vocs build",
+		"build:app": "vocs build",
+		"dev": "vocs dev",
+		"preview": "vocs preview",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"react": "^19.2.6",
+		"react-dom": "^19.2.6",
+		"react-server-dom-webpack": "19.2.4",
+		"vite": "^8.1.5",
+		"vocs": "2.7.0",
+		"waku": "1.0.0-beta.8"
+	},
+	"devDependencies": {
+		"@types/node": "^25.9.0",
+		"@types/react": "^19.2.17",
+		"@types/react-dom": "^19.2.3",
+		"typescript": "^6.0.3"
+	}
+}

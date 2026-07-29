@@ -1,0 +1,83 @@
+---
+title: Bun example API
+description: Modules exported by apps/bun
+---
+
+# Bun example API
+
+**Package:** `@tevm/example-bun` · **Source:** [`apps/bun`](https://github.com/evmts/tevm-examples/tree/main/apps/bun)
+
+## `readContract.ts`
+
+### `client`
+
+```ts
+const client: MemoryClient
+```
+
+A Tevm memory client forked from `process.env.RPC_URL`, falling back to a local node at `http://localhost:8545`.
+State is fetched lazily from the fork transport, so reads resolve against real chain state without syncing a node.
+
+```ts
+import { client } from './readContract.js'
+
+const blockNumber = await client.getBlockNumber()
+```
+
+### `ReadContractOptions`
+
+```ts
+type ReadContractOptions = {
+  /** Contract address to read from. Defaults to the zero address. */
+  address?: Address
+  /** Account passed as the `balanceOf` argument. Defaults to the zero address. */
+  account?: Address
+  /** ABI to decode against. Defaults to the ERC20 ABI shipped with `tevm/contract`. */
+  abi?: typeof ERC20.abi
+  /** Function to call. Only `balanceOf` is supported by this example. */
+  functionName?: 'balanceOf'
+}
+```
+
+Every field is optional; the defaults read `balanceOf(0x0…0)` on the zero address using the built-in ERC20 ABI.
+
+### `readContract`
+
+```ts
+function readContract(options?: ReadContractOptions): Promise<bigint>
+```
+
+Reads an ERC20 balance through the forked memory `client`.
+
+**Returns** — the decoded balance as a `bigint`.
+
+**Throws** — if the fork transport is unreachable, or if the address does not expose an ERC20-compatible
+`balanceOf` (the call reverts and viem throws a `ContractFunctionExecutionError`).
+
+```ts
+import { readContract } from './readContract.js'
+
+const balance = await readContract({
+  address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+  account: '0x55FE002aefF02F77364de339a1292923A15844B8',
+})
+console.log(balance) // 1234567890n
+```
+
+## `plugins.ts`
+
+Side-effecting module. Registers `bunPluginTevm({})` with Bun's plugin registry so `.sol` imports resolve. Exports
+nothing; it must be listed in `bunfig.toml` under both `preload` and `[test].preload`.
+
+## `ExampleContract.sol`
+
+`contract ExampleContract is ERC721` — the wagmi mint example. Public surface:
+
+| Member | Signature | Notes |
+| --- | --- | --- |
+| `totalSupply` | `uint256 public totalSupply` | Auto-generated getter |
+| `mint` | `function mint() external` | Mints the next free token id to `msg.sender` |
+| `mint` | `function mint(uint256 tokenId) external` | Mints a specific id; reverts with `"Token ID is taken"` if owned |
+| `tokenURI` | `function tokenURI(uint256 tokenId) public pure returns (string memory)` | Fully on-chain base64 SVG metadata |
+
+Everything ERC721 and ERC721Enumerable provides is inherited from OpenZeppelin.

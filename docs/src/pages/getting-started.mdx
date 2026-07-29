@@ -1,0 +1,141 @@
+---
+title: Getting started
+description: Clone, install, and run the Tevm example workspace
+---
+
+# Getting started
+
+## Requirements
+
+| Tool | Version | Needed for |
+| --- | --- | --- |
+| Node.js | `^24.0.0` (see [`.nvmrc`](https://github.com/evmts/tevm-examples/blob/main/.nvmrc)) | everything |
+| pnpm | `9.15.9` (pinned via `packageManager`) | everything |
+| Foundry | latest | `apps/vite` and `apps/mud` Solidity builds |
+| Bun | `^1.3` | running `apps/bun` interactively |
+
+## Install
+
+```bash
+git clone https://github.com/evmts/tevm-examples.git
+cd tevm-examples
+corepack enable
+pnpm install
+```
+
+`corepack enable` is what makes `pnpm` resolve to the pinned `pnpm@9.15.9`. Installing with a different major will
+produce a lockfile diff that CI rejects.
+
+## Run the whole workspace
+
+```bash
+pnpm lint       # biome
+pnpm typecheck  # tsc --noEmit in every app
+pnpm build      # bundles every app
+pnpm test       # vitest in every app
+```
+
+Tests that need a real RPC endpoint are skipped unless the corresponding environment variable is set:
+
+```bash
+export RPC_URL=https://mainnet.optimism.io          # apps/bun
+export RPC_URL_MAINNET=https://eth.llamarpc.com     # apps/esbuild
+pnpm test
+```
+
+## Run a single app
+
+Every app is a pnpm workspace package, so filter by its package name:
+
+```bash
+pnpm --filter @tevm/example-vite dev
+pnpm --filter @tevm/example-next dev
+pnpm --filter @tevm/example-bun dev
+pnpm --filter @tevm/example-esbuild dev
+pnpm --filter svelte-ethers dev
+pnpm --filter @tevm/example-mud dev
+```
+
+| App directory | Package name |
+| --- | --- |
+| `apps/bun` | `@tevm/example-bun` |
+| `apps/esbuild` | `@tevm/example-esbuild` |
+| `apps/mud` | `@tevm/example-mud` |
+| `apps/next` | `@tevm/example-next` |
+| `apps/svelte-ethers` | `svelte-ethers` |
+| `apps/vite` | `@tevm/example-vite` |
+
+## Installing Tevm in your own project
+
+The examples track the `1.0.0-next` line. The meta-package plus whichever bundler plugin matches your toolchain is
+all you need:
+
+```bash
+pnpm add tevm viem
+pnpm add -D @tevm/ts-plugin
+```
+
+Then add one bundler plugin:
+
+```bash
+pnpm add -D @tevm/bun-plugin      # Bun
+pnpm add -D @tevm/esbuild-plugin  # esbuild
+pnpm add -D @tevm/vite-plugin     # Vite / SvelteKit
+```
+
+The exact ranges the examples pin are:
+
+```json
+{
+  "dependencies": {
+    "@tevm/contract": "^1.0.0-next.149",
+    "@tevm/ethers": "^1.0.0-next.148",
+    "@tevm/jsonrpc": "^1.0.0-next.148",
+    "viem": "~2.37.13"
+  },
+  "devDependencies": {
+    "@tevm/bun-plugin": "^1.0.0-next.148",
+    "@tevm/esbuild-plugin": "^1.0.0-next.148",
+    "@tevm/ts-plugin": "^1.0.0-next.148",
+    "@tevm/vite-plugin": "^1.0.0-next.148",
+    "tevm": "^1.0.0-next.149"
+  }
+}
+```
+
+:::note
+`tevm` is declared as a **peer dependency** (`"tevm": ">=1.0.0"`) in the apps that consume it, and satisfied by a
+dev dependency. That mirrors how a real integration would depend on Tevm and keeps the smoke test honest.
+:::
+
+## First program
+
+This is the complete `apps/bun` entry point — no elisions. It forks a live chain into an in-memory EVM and reads an
+ERC20 balance.
+
+```ts
+import { http } from '@tevm/jsonrpc'
+import { ERC20 } from 'tevm/contract'
+import { createMemoryClient } from 'tevm/memory-client'
+import type { Address } from 'viem'
+
+const client = createMemoryClient({
+  fork: {
+    transport: http(process.env.RPC_URL ?? 'http://localhost:8545'),
+  },
+})
+
+const usdc: Address = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+const holder: Address = '0x55FE002aefF02F77364de339a1292923A15844B8'
+
+const balance = await client.readContract({
+  address: usdc,
+  abi: ERC20.abi,
+  functionName: 'balanceOf',
+  args: [holder],
+})
+
+console.log(balance)
+```
+
+Next: [Solidity imports](/guides/solidity-imports), the feature that makes the rest of the examples tick.

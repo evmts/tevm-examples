@@ -1,0 +1,146 @@
+---
+title: Solidity imports
+description: How the Tevm bundler plugins turn a .sol file into a typed contract object
+---
+
+# Solidity imports
+
+Every app in this repository except `apps/next` and `apps/mud` uses the same core Tevm feature: importing a
+`.sol` file directly from JavaScript or TypeScript.
+
+```ts
+import { ExampleContract } from './ExampleContract.sol'
+```
+
+At build time a Tevm bundler plugin compiles the Solidity with solc and replaces the import with a
+[`Contract`](https://tevm.sh) object carrying the ABI, the deployed bytecode, and typed action creators.
+
+## The three pieces
+
+A working setup always has three parts. Missing any one of them produces a confusing failure, so check all three
+before debugging further.
+
+### 1. A bundler plugin
+
+Pick the one matching your bundler. Each is a drop-in plugin — no other configuration is required.
+
+:::code-group
+
+```ts [bun (plugins.ts)]
+import { bunPluginTevm } from '@tevm/bun-plugin'
+import { plugin } from 'bun'
+
+plugin(bunPluginTevm({}))
+```
+
+```js [esbuild (build.js)]
+import { esbuildPluginTevm } from '@tevm/esbuild-plugin'
+import { build } from 'esbuild'
+
+build({
+  entryPoints: ['src/index.js'],
+  outdir: 'dist',
+  bundle: true,
+  minify: true,
+  sourcemap: false,
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'production'),
+  },
+  plugins: [esbuildPluginTevm()],
+}).catch((e) => {
+  console.error(e)
+  process.exit(1)
+})
+```
+
+```ts [vite (vite.config.ts)]
+import { vitePluginTevm } from '@tevm/vite-plugin'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  plugins: [react(), vitePluginTevm({})],
+})
+```
+
+:::
+
+For Bun the plugin must be *preloaded*, including in tests — that is what `apps/bun/bunfig.toml` does:
+
+```toml
+preload = ["./plugins.ts"]
+
+[test]
+preload = ["./plugins.ts"]
+```
+
+### 2. The TypeScript plugin
+
+Bundler plugins only run at build time. Your editor and `tsc` need `@tevm/ts-plugin` to resolve the same imports:
+
+```json
+{
+  "compilerOptions": {
+    "plugins": [{ "name": "@tevm/ts-plugin" }]
+  }
+}
+```
+
+In VS Code you must also select the workspace TypeScript version, otherwise the bundled compiler runs without the
+plugin and every `.sol` import shows as unresolved.
+
+### 3. An ambient module declaration (optional but recommended)
+
+`apps/vite` and `apps/svelte-ethers` ship a `solidity.d.ts` so plain `tsc` runs and non-TS-plugin tooling do not
+choke on the import specifier.
+
+## Configuring solc resolution
+
+`tevm.config.json` controls how Solidity sources and remappings are resolved. `apps/vite` uses a Foundry project,
+so it only needs one flag:
+
+```json
+{
+  "foundryProject": true,
+  "jsonAsConst": ["**/foo.json"]
+}
+```
+
+With `foundryProject: true` the plugin reads `foundry.toml` for `remappings`, `src`, and `libs`, so
+`import "@openzeppelin/contracts/token/ERC721/ERC721.sol"` inside your Solidity resolves exactly as it does under
+`forge build`.
+
+## What you get back
+
+The imported object is a Tevm `Contract`. Two shapes matter in practice:
+
+```ts
+import { createPublicClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
+import { ExampleContract } from './ExampleContract.sol'
+
+const publicClient = createPublicClient({
+  chain: mainnet,
+  transport: http('https://eth.llamarpc.com'),
+})
+
+// 1. `.abi` — a plain abitype-typed ABI, usable anywhere
+const abi = ExampleContract.abi
+
+// 2. `.read.<fn>(...)` — a pre-built, fully typed read action
+const owner = await publicClient.readContract({
+  ...ExampleContract.read.ownerOf(1n),
+  address: '0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2',
+})
+
+console.log(abi.length, owner)
+```
+
+Spreading `ExampleContract.read.ownerOf(1n)` supplies `abi`, `functionName`, and `args` in one go; you only add the
+`address`. `apps/esbuild` is built entirely on this pattern — see the
+[esbuild guide](/guides/esbuild).
+
+:::warning
+Solidity imports are a **build-time** feature. Importing a `.sol` file from code that is executed by a runtime with
+no Tevm plugin registered (a bare `node script.js`, for example) throws a module-resolution error.
+:::

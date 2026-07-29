@@ -1,3 +1,13 @@
+/**
+ * Deployment addresses of the example NFT contract, keyed by chain id.
+ *
+ * @example
+ * ```ts
+ * import { addresses } from './addresses'
+ *
+ * console.log(addresses[420])
+ * ```
+ */
 export const addresses = {
 	'1': '0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2' as const,
 	'5': '0x1df10ec981ac5871240be4a94f250dd238b77901' as const,

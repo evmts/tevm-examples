@@ -1,0 +1,121 @@
+---
+title: esbuild
+description: Bundling Solidity imports with esbuild and reading contracts through viem
+---
+
+# esbuild
+
+**Source:** [`apps/esbuild`](https://github.com/evmts/tevm-examples/tree/main/apps/esbuild) · **Package:** `@tevm/example-esbuild`
+
+A Node script bundled by esbuild. It shows the `.sol` → typed-contract pipeline in plain JavaScript (no TypeScript
+required) and the `spread a read action into viem` pattern.
+
+## Run it
+
+```bash
+pnpm install
+cp apps/esbuild/example.env apps/esbuild/.env   # then fill in RPC_URL_MAINNET
+export RPC_URL_MAINNET=https://eth.llamarpc.com
+pnpm --filter @tevm/example-esbuild dev   # builds, then runs dist/index.js
+pnpm --filter @tevm/example-esbuild test
+```
+
+## The build
+
+```js [build.js]
+import { esbuildPluginTevm } from '@tevm/esbuild-plugin'
+import { build } from 'esbuild'
+
+build({
+  entryPoints: ['src/index.js'],
+  outdir: 'dist',
+  minify: true,
+  sourcemap: false,
+  bundle: true,
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'production'),
+  },
+  plugins: [esbuildPluginTevm()],
+}).catch((e) => {
+  console.error(e)
+  process.exit(1)
+})
+```
+
+`esbuildPluginTevm()` takes no required options. It reads `foundry.toml` (`solc = "0.8.20"` here) for the compiler
+version, and resolves `@openzeppelin/contracts/...` imports inside the Solidity through Node resolution.
+
+## Reading a contract
+
+```js [src/ownerOf.js]
+import { http, createPublicClient } from 'viem'
+import { mainnet } from 'viem/chains'
+import { ExampleContract } from './ExampleContract.sol'
+import { addresses } from './addresses.js'
+import { rpcUrls } from './constants.js'
+
+export const publicClient = createPublicClient({
+  chain: mainnet,
+  transport: http(rpcUrls[mainnet.id]),
+})
+
+export const ownerOf = (tokenId = BigInt(1)) => {
+  return publicClient.readContract({
+    ...ExampleContract.read.ownerOf(tokenId),
+    address: addresses[1],
+  })
+}
+```
+
+`ExampleContract.read.ownerOf(tokenId)` returns `{ abi, functionName, args }`. Spreading it means the ABI, the
+function name, and the argument types are all derived from the Solidity source — rename `ownerOf` in the contract and
+this line stops type-checking.
+
+```js [src/index.js]
+import { ownerOf } from './ownerOf.js'
+
+ownerOf().then(console.log).catch(console.error)
+```
+
+## Environment handling
+
+The RPC URL is validated at module load rather than at first request, so a bad configuration fails immediately with a
+readable error instead of a network error deep in a call stack:
+
+```js [src/constants.js]
+import { mainnet } from 'viem/chains'
+import { z } from 'zod'
+
+export const rpcUrls = {
+  1: z
+    .string()
+    .url()
+    .optional()
+    .default(mainnet.rpcUrls.default.http[0])
+    .parse(process.env.RPC_URL_MAINNET),
+}
+```
+
+## Typed addresses without TypeScript
+
+`src/addresses.js` is plain JS; a hand-written `src/addresses.d.ts` gives it literal types, so
+`addresses[1]` narrows to the exact `0x…` string that viem wants for an `Address`:
+
+```ts [src/addresses.d.ts]
+export const addresses: {
+  '1': '0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2'
+  '5': '0x1df10ec981ac5871240be4a94f250dd238b77901'
+  '10': '0x1df10ec981ac5871240be4a94f250dd238b77901'
+  '56': '0x1df10ec981ac5871240be4a94f250dd238b77901'
+  '137': '0x1df10ec981ac5871240be4a94f250dd238b77901'
+  '250': '0x1df10ec981ac5871240be4a94f250dd238b77901'
+  '288': '0x1df10ec981ac5871240be4a94f250dd238b77901'
+  '324': '0x1df10ec981ac5871240be4a94f250dd238b77901'
+  '420': '0x1df10ec981ac5871240be4a94f250dd238b77901'
+  '42161': '0x1df10ec981ac5871240be4a94f250dd238b77901'
+  '80001': '0x1df10ec981ac5871240be4a94f250dd238b77901'
+  '421613': '0x1df10ec981ac5871240be4a94f250dd238b77901'
+}
+```
+
+See the [esbuild example API reference](/reference/esbuild) for the exported surface.

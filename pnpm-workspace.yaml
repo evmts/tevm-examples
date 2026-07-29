@@ -1,6 +1,7 @@
 packages:
   - apps/*
   - apps/mud/packages/*
+  - docs
 
 onlyBuiltDependencies:
   - "@biomejs/biome"

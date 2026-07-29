@@ -1,0 +1,163 @@
+---
+title: Vite + React
+description: A Vite React app with Wagmi, Ethers, Foundry, and in-browser Solidity compilation
+---
+
+# Vite + React
+
+**Source:** [`apps/vite`](https://github.com/evmts/tevm-examples/tree/main/apps/vite) · **Package:** `@tevm/example-vite`
+
+The most complete example. It combines Solidity imports with Wagmi hooks, the Ethers adapter, a Foundry project, and
+an in-browser Solidity editor that compiles with solc in a Web Worker.
+
+## Run it
+
+Foundry is required, because the Solidity is a real Foundry project.
+
+```bash
+pnpm install
+cp apps/vite/example.env apps/vite/.env
+pnpm --filter @tevm/example-vite build:contracts   # forge build
+pnpm --filter @tevm/example-vite dev               # vite, http://localhost:5173
+```
+
+To develop against a local fork instead of public RPC endpoints:
+
+```bash
+pnpm --filter @tevm/example-vite anvil
+```
+
+## Vite configuration
+
+```ts [vite.config.ts]
+import { vitePluginTevm } from '@tevm/vite-plugin'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import vitePluginWasm from 'vite-plugin-wasm'
+
+export default defineConfig({
+  define: {
+    global: 'globalThis',
+  },
+  build: {
+    target: 'esnext',
+    rollupOptions: {
+      external: ['@safe-globalThis/safe-apps-provider', '@safe-globalThis/safe-apps-sdk'],
+    },
+  },
+  plugins: [
+    nodePolyfills({
+      globals: {
+        process: true,
+        Buffer: true,
+        global: true,
+      },
+    }),
+    react(),
+    vitePluginTevm({}) as any,
+    vitePluginWasm(),
+  ],
+})
+```
+
+Why each non-obvious plugin is there:
+
+- **`nodePolyfills`** — parts of the wallet-connector stack still expect `Buffer`, `process`, and `global` in the
+  browser.
+- **`vitePluginWasm`** — solc is compiled to WebAssembly; the in-browser editor needs top-level `await` on a wasm
+  import, which requires `build.target: 'esnext'`.
+- **`as any` on `vitePluginTevm`** — the plugin is typed against the Vite version it was published with. When the app
+  runs a newer Vite major, the structural `Plugin` types disagree even though the runtime contract is unchanged.
+
+## Foundry resolution
+
+```json [tevm.config.json]
+{
+  "foundryProject": true,
+  "jsonAsConst": ["**/foo.json"]
+}
+```
+
+`foundryProject: true` makes the Tevm compiler read `foundry.toml`, so remappings behave identically in `forge build`
+and in Vite. `jsonAsConst` makes matching JSON imports typed as literals instead of widened `string`/`number`.
+
+## Wagmi + Solidity imports
+
+The payoff of compiling Solidity at build time is that a Wagmi hook needs no ABI import and no hand-written types:
+
+```tsx [src/wagmi/WagmiReads.tsx]
+import { type Address, useAccount, useContractRead } from 'wagmi'
+import { addresses } from '../addresses'
+import { WagmiMintExample } from '../contracts/WagmiMintExample.sol'
+
+export const WagmiReads = () => {
+  const { address, isConnected } = useAccount()
+
+  const { data: balance } = useContractRead({
+    // Spreading a method spreads abi, functionName and args.
+    // Go-to-definition on `balanceOf` jumps into the Solidity source.
+    ...WagmiMintExample.read.balanceOf(address as Address),
+    address: addresses[420],
+    enabled: isConnected,
+  })
+  const { data: totalSupply } = useContractRead({
+    ...WagmiMintExample.read.totalSupply(),
+    address: addresses[420],
+    enabled: isConnected,
+  })
+
+  return (
+    <div>
+      <div>
+        balanceOf({address}): {balance?.toString()}
+      </div>
+      <div>totalSupply(): {totalSupply?.toString()}</div>
+    </div>
+  )
+}
+```
+
+Go-to-definition on `balanceOf` opens `WagmiMintExample.sol` at the function declaration. That is `@tevm/ts-plugin`
+doing its job — see [Solidity imports](/guides/solidity-imports).
+
+## Ethers in the same app
+
+`@tevm/ethers` gives the same contract object an Ethers-flavoured interface, so both libraries can coexist:
+
+```tsx [src/EthersExample.tsx]
+import { useQuery } from '@tanstack/react-query'
+import { Contract } from '@tevm/ethers'
+import { JsonRpcProvider } from 'ethers'
+import { addresses } from './addresses'
+import { WagmiMintExample } from './contracts/WagmiMintExample.sol'
+
+const getBalance = async () => {
+  const provider = new JsonRpcProvider('https://goerli.optimism.io', 420)
+  const c = new Contract(addresses[420], WagmiMintExample.abi, provider)
+  return c.balanceOf(addresses[420])
+}
+
+export const EthersExample = () => {
+  const { error, isLoading, data } = useQuery(['ethers.Contract().balanceOf'], getBalance)
+
+  if (isLoading) return <div>loading balance...</div>
+  if (error) {
+    console.error(error)
+    return <div>error loading balance</div>
+  }
+  return <div>{data?.toString()}</div>
+}
+```
+
+:::warning
+This app targets Optimism Goerli (chain id `420`), which has been shut down. The code is a valid demonstration of the
+APIs, but the reads will not resolve against a live endpoint — point `addresses` and the provider at a chain you
+actually run.
+:::
+
+## What else is in there
+
+- `src/SolEditor.tsx` + `src/SolcWorker.ts` — compile Solidity typed into a textarea, in a Web Worker, with solc-wasm.
+- `src/vm/` — `Pure.t.sol` and `run.ts`, running a Solidity test file through Tevm.
+- `script/Deploy.s.sol` — a Foundry deploy script, wired to `pnpm deploy-contracts`.

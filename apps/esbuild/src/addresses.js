@@ -1,3 +1,16 @@
+/**
+ * Deployment addresses of `ExampleContract`, keyed by chain id.
+ *
+ * The accompanying `addresses.d.ts` types each value as a string literal so
+ * `addresses[1]` narrows to a viem `Address` without a cast.
+ *
+ * @example
+ * ```js
+ * import { addresses } from './addresses.js'
+ *
+ * console.log(addresses[1]) // '0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2'
+ * ```
+ */
 export const addresses = {
 	1: '0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2',
 	5: '0x1df10ec981ac5871240be4a94f250dd238b77901',

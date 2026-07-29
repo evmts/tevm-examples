@@ -1,0 +1,81 @@
+---
+title: Tevm Examples
+description: Runnable Tevm example applications that consume the published npm packages
+---
+
+import { CodeWindow } from '../components/CodeWindow'
+import { ExampleExplorer } from '../components/ExampleExplorer'
+import { FeatureGrid } from '../components/FeatureGrid'
+import { LandingHero } from '../components/LandingHero'
+import { SiteSwitcher } from '../components/SiteSwitcher'
+
+<LandingHero />
+
+<ExampleExplorer />
+
+<CodeWindow title="apps/bun/readContract.ts">
+
+```ts
+import { http } from '@tevm/jsonrpc'
+import { ERC20 } from 'tevm/contract'
+import { createMemoryClient } from 'tevm/memory-client'
+
+// Fork a live chain into an in-memory EVM
+const client = createMemoryClient({
+	fork: { transport: http(process.env.RPC_URL ?? 'http://localhost:8545') },
+})
+
+// Read real chain state with full type safety — nothing to mock
+const balance = await client.readContract({
+	address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+	abi: ERC20.abi,
+	functionName: 'balanceOf',
+	args: ['0x55FE002aefF02F77364de339a1292923A15844B8'],
+})
+console.log(balance) // 310145594603826337866n
+```
+
+</CodeWindow>
+
+<FeatureGrid />
+
+# Tevm Examples
+
+`evmts/tevm-examples` is the home of every standalone [Tevm](https://tevm.sh) example application.
+
+Each app in [`apps/`](https://github.com/evmts/tevm-examples/tree/main/apps) is a normal application that installs
+Tevm **from npm** — there are no workspace links back to the Tevm source tree. That single constraint is the whole
+point of this repository:
+
+- **Examples that actually work.** Copying a snippet out of these apps gives you code that runs against the packages
+  npm serves you today, not against unreleased monorepo internals.
+- **An integration smoke test.** Because the apps resolve published versions, `pnpm build && pnpm test` here is a real
+  end-to-end check that a Tevm release installs, type-checks, bundles, and runs across six different toolchains.
+
+## The applications
+
+| App | What it demonstrates |
+| --- | --- |
+| [`apps/bun`](/guides/bun) | Bun runtime, `@tevm/bun-plugin`, Solidity imports, forked `createMemoryClient` |
+| [`apps/esbuild`](/guides/esbuild) | esbuild bundling with `@tevm/esbuild-plugin` and a viem public client |
+| [`apps/vite`](/guides/vite) | Vite + React + Wagmi + Ethers, Foundry project, in-browser solc |
+| [`apps/next`](/guides/next) | Next.js app router with an in-browser Tevm memory client |
+| [`apps/svelte-ethers`](/guides/svelte-ethers) | SvelteKit with the `@tevm/ethers` adapter |
+| [`apps/mud`](/guides/mud) | A React [MUD](https://mud.dev) application |
+
+## Start here
+
+- [Getting started](/getting-started) — clone, install, and run the workspace.
+- [Solidity imports](/guides/solidity-imports) — the feature almost every app depends on.
+- [How this repo relates to Tevm](/ecosystem/repo-map) — where core, docs, and examples live.
+
+## Where the rest of the docs live
+
+This site documents the **examples**. API documentation for Tevm itself lives at
+[tevm.sh](https://tevm.sh), and the Tevm Node docs live at [node.tevm.sh](https://node.tevm.sh).
+
+## Part of the tevm.sh family
+
+Each Tevm project has its own docs site, built on the same design system:
+
+<SiteSwitcher />

@@ -1,0 +1,124 @@
+---
+title: Bun
+description: Running Tevm under Bun with the Tevm Bun plugin and a forked memory client
+---
+
+# Bun
+
+**Source:** [`apps/bun`](https://github.com/evmts/tevm-examples/tree/main/apps/bun) · **Package:** `@tevm/example-bun`
+
+The smallest app in the repository. It registers `@tevm/bun-plugin` so Solidity imports work under the Bun runtime,
+then forks a chain into an in-memory EVM and reads an ERC20 balance from it.
+
+## Run it
+
+```bash
+pnpm install
+export RPC_URL=https://mainnet.optimism.io
+pnpm --filter @tevm/example-bun dev        # bun --watch readContract.ts
+pnpm --filter @tevm/example-bun test       # vitest
+pnpm --filter @tevm/example-bun typecheck  # tsc --noEmit
+```
+
+Without `RPC_URL` the client falls back to `http://localhost:8545`, and the integration test skips itself.
+
+## Registering the plugin
+
+Bun plugins have to be installed before any module that depends on them is loaded, which means preloading.
+
+```ts [plugins.ts]
+import { bunPluginTevm } from '@tevm/bun-plugin'
+import { plugin } from 'bun'
+
+// Load Tevm plugin to enable solidity imports.
+// Tevm is configured in tsconfig.json.
+plugin(bunPluginTevm({}))
+```
+
+```toml [bunfig.toml]
+preload = ["./plugins.ts"]
+
+[test]
+preload = ["./plugins.ts"]
+```
+
+The `[test]` block matters: without it `bun test` resolves `.sol` imports differently from `bun run`, and you get an
+error only under test.
+
+## The client
+
+```ts [readContract.ts]
+import { http } from '@tevm/jsonrpc'
+import { ERC20 } from 'tevm/contract'
+import { createMemoryClient } from 'tevm/memory-client'
+import type { Address } from 'viem'
+
+// Default values that can be overridden
+const defaultAddress = '0x0000000000000000000000000000000000000000'
+const defaultAccount = '0x0000000000000000000000000000000000000000'
+const defaultRpcUrl = 'http://localhost:8545'
+
+/**
+ * A Tevm memory client forked from `process.env.RPC_URL`.
+ */
+export const client = createMemoryClient({
+  fork: {
+    transport: http(process.env.RPC_URL || defaultRpcUrl),
+  },
+})
+
+/** Options accepted by {@link readContract}. */
+type ReadContractOptions = {
+  address?: Address
+  account?: Address
+  abi?: typeof ERC20.abi
+  functionName?: 'balanceOf'
+}
+
+export const readContract = async ({
+  address = defaultAddress,
+  account = defaultAccount,
+  abi = ERC20.abi,
+  functionName = 'balanceOf',
+}: ReadContractOptions = {}) => {
+  return client.readContract({
+    address,
+    abi,
+    functionName,
+    args: [account],
+  })
+}
+
+// Execute if run directly
+if (import.meta.main) {
+  readContract()
+    .then((result) => console.log(JSON.stringify(result, null, 2)))
+    .catch((error) => console.error('Error:', error))
+}
+```
+
+Three things worth stealing from this file:
+
+- **`ERC20` from `tevm/contract`.** Tevm ships pre-built contract objects for common standards, so you do not have
+  to paste an ABI to read a token balance.
+- **`http` from `@tevm/jsonrpc`.** Tevm's transport factory, interchangeable with viem's for fork configuration.
+- **`createMemoryClient({ fork })`.** State is lazily fetched from the fork transport on first access, so reads work
+  against real mainnet state without syncing a node.
+
+## Testing
+
+The test is an integration test and opts out when no endpoint is configured, rather than failing CI:
+
+```ts [readContract.spec.ts]
+import { expect, test } from 'vitest'
+import { readContract } from './readContract'
+
+// This integration test needs a caller-provided fork endpoint; CI has no RPC credentials.
+const testWithRpc = process.env.RPC_URL ? test : test.skip
+
+testWithRpc(readContract.name, async () => {
+  expect(await readContract()).toBe(BigInt(1))
+})
+```
+
+See the [Bun example API reference](/reference/bun) for the exported surface.

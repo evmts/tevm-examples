@@ -1,0 +1,109 @@
+---
+title: Shared conventions
+description: The rules every example app in this repository follows
+---
+
+# Shared conventions
+
+These rules are enforced by CI or by review. Follow them when adding an app or changing an existing one.
+
+## Dependencies
+
+- **npm only.** Tevm packages are installed from npm with caret ranges (`^1.0.0-next.149`). `workspace:`, `file:`,
+  and `link:` protocols pointing at `tevm-monorepo` are not allowed — they defeat the purpose of this repository
+  ([why](/ecosystem/repo-map)).
+- **`tevm` is a peer dependency.** Apps that import the node declare `"tevm": ">=1.0.0"` in `peerDependencies` and
+  install a concrete version in `devDependencies` for local validation.
+- **The one internal link** is `apps/mud/packages/client` → `apps/mud/packages/contracts`, because both live here.
+- **pnpm 9.15.9**, pinned by `packageManager` and enabled via `corepack enable`. Installing with another major
+  produces a lockfile diff CI rejects.
+
+## Every app must have
+
+```json
+{
+  "scripts": {
+    "build": "…",
+    "test": "…",
+    "typecheck": "tsc --noEmit"
+  }
+}
+```
+
+The root `build`, `test`, and `typecheck` scripts fan out to every app by package name, and CI runs
+`pnpm lint && pnpm typecheck && pnpm build && pnpm test`. An app with a missing script breaks the fan-out. Use
+`vitest run --passWithNoTests` if there is genuinely nothing to test yet.
+
+## Network access in tests
+
+Tests that need a real RPC endpoint must **skip**, not fail, when the endpoint is absent. CI has no RPC credentials.
+
+```ts
+import { expect, test } from 'vitest'
+import { readContract } from './readContract'
+
+// This integration test needs a caller-provided fork endpoint; CI has no RPC credentials.
+const testWithRpc = process.env.RPC_URL ? test : test.skip
+
+testWithRpc(readContract.name, async () => {
+  expect(await readContract()).toBe(BigInt(1))
+})
+```
+
+Document the variable in the app's `README.md` and, where useful, ship an `example.env`. Current variables:
+
+| Variable | App |
+| --- | --- |
+| `RPC_URL` | `apps/bun` |
+| `RPC_URL_MAINNET` | `apps/esbuild` |
+| `VITE_RPC_URL_1`, `VITE_RPC_URL_420`, `VITE_ALCHEMY_API_KEY` | `apps/vite` |
+
+## Formatting and linting
+
+Biome, configured at the repo root (`biome.json`): tabs, single quotes, no semicolons in TypeScript.
+
+```bash
+pnpm lint          # biome lint .
+biome check . --write --unsafe
+```
+
+`apps/next` is the exception — it uses Prettier with an import-sort plugin, run through its own
+`pnpm --filter @tevm/example-next format`.
+
+## JSDoc
+
+When you touch an exported symbol that has no JSDoc, add it. A complete block has a one-line summary, `@param` for
+each parameter, `@returns`, `@throws` for every failure mode a caller can hit, and a runnable `@example`:
+
+```js
+/**
+ * Reads `ownerOf(tokenId)` on the mainnet deployment of `ExampleContract`.
+ *
+ * @param {bigint} [tokenId] - Token id to look up. Defaults to `1n`.
+ * @returns {Promise<`0x${string}`>} The owner address.
+ * @throws If `RPC_URL_MAINNET` points at an unreachable endpoint, or if the token does
+ *   not exist — ERC721 `ownerOf` reverts and viem throws a `ContractFunctionExecutionError`.
+ * @example
+ * ```js
+ * import { ownerOf } from './ownerOf.js'
+ *
+ * console.log(await ownerOf())
+ * ```
+ */
+```
+
+Examples in JSDoc must be complete and runnable. No `...` elisions — someone will paste it.
+
+## TypeScript
+
+- `@tevm/ts-plugin` in `compilerOptions.plugins` for any app importing `.sol`.
+- A `solidity.d.ts` ambient declaration alongside it, so `tsc` and `svelte-check` work without the plugin.
+- `tsc --noEmit`; nothing in `apps/` emits declarations.
+
+## Adding a new app
+
+1. Create `apps/<name>/` with a `package.json` following the rules above.
+2. `apps/*` is already a workspace glob — no `pnpm-workspace.yaml` change is needed unless you nest packages.
+3. Add the package name to the root `build`, `test`, and `typecheck` scripts.
+4. Add a `README.md`, and a guide page under `docs/src/pages/guides/` plus a sidebar entry in `docs/vocs.config.ts`.
+5. Add a changeset if the change is user-visible.

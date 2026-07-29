@@ -1,0 +1,100 @@
+---
+title: esbuild example API
+description: Modules exported by apps/esbuild
+---
+
+# esbuild example API
+
+**Package:** `@tevm/example-esbuild` · **Source:** [`apps/esbuild`](https://github.com/evmts/tevm-examples/tree/main/apps/esbuild)
+
+This app is written in JavaScript with JSDoc types rather than TypeScript, which is why it also ships a hand-written
+`addresses.d.ts`.
+
+## `src/ownerOf.js`
+
+### `publicClient`
+
+```ts
+const publicClient: PublicClient
+```
+
+A viem public client pointed at Ethereum mainnet via `rpcUrls`.
+
+```js
+import { publicClient } from './ownerOf.js'
+
+const blockNumber = await publicClient.getBlockNumber()
+```
+
+### `ownerOf`
+
+```ts
+function ownerOf(tokenId?: bigint): Promise<`0x${string}`>
+```
+
+Reads `ownerOf(tokenId)` on the mainnet deployment of `ExampleContract`. `tokenId` defaults to `1n`.
+
+The ABI, function name, and argument types all come from the Solidity import, so renaming the function in
+`ExampleContract.sol` breaks this call at build time.
+
+**Throws** — if `RPC_URL_MAINNET` points at an unreachable endpoint, or if the token does not exist (ERC721
+`ownerOf` reverts and viem throws a `ContractFunctionExecutionError`).
+
+```js
+import { ownerOf } from './ownerOf.js'
+
+console.log(await ownerOf())            // owner of token 1
+console.log(await ownerOf(BigInt(420))) // owner of token 420
+```
+
+## `src/constants.js`
+
+### `rpcUrls`
+
+```ts
+const rpcUrls: { 1: string }
+```
+
+RPC endpoints keyed by chain id. Validated with zod **at module load** rather than at first request, so a malformed
+`RPC_URL_MAINNET` fails immediately with a readable error instead of surfacing as a network failure deep inside a
+contract call. Falls back to `mainnet.rpcUrls.default.http[0]` when the variable is unset.
+
+**Throws** — a `ZodError` if `RPC_URL_MAINNET` is set but is not a valid URL.
+
+```js
+import { mainnet } from 'viem/chains'
+import { rpcUrls } from './constants.js'
+
+console.log(rpcUrls[mainnet.id])
+```
+
+## `src/addresses.js`
+
+### `addresses`
+
+```ts
+const addresses: Record<'1' | '5' | '10' | '56' | '137' | '250' | '288' | '324' | '420' | '42161' | '80001' | '421613', `0x${string}`>
+```
+
+Deployment addresses of `ExampleContract`, keyed by chain id. `src/addresses.d.ts` types each value as a string
+literal so `addresses[1]` narrows to a viem `Address` without a cast.
+
+```js
+import { addresses } from './addresses.js'
+
+console.log(addresses[1]) // '0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2'
+```
+
+## `src/index.js`
+
+Entry point bundled to `dist/index.js`. Calls `ownerOf()` and logs the result:
+
+```js
+import { ownerOf } from './ownerOf.js'
+
+ownerOf().then(console.log).catch(console.error)
+```
+
+## `build.js`
+
+Not an exported module — the esbuild driver. See the [esbuild guide](/guides/esbuild) for the full configuration.

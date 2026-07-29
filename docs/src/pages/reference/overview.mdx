@@ -1,0 +1,43 @@
+---
+title: Reference overview
+description: The modules each example app exports, and where to find Tevm's own API docs
+---
+
+# Reference overview
+
+This section documents the modules the example apps export. It is generated from the JSDoc in the source — if a
+signature here disagrees with the code, the code is authoritative and the docs are a bug.
+
+For the **Tevm API itself** — `createMemoryClient`, actions, `Contract`, the bundler plugins — see
+[tevm.sh](https://tevm.sh) and [node.tevm.sh](https://node.tevm.sh). Nothing in this repository re-exports Tevm.
+
+## Package names
+
+| App directory | pnpm package name | Documented at |
+| --- | --- | --- |
+| `apps/bun` | `@tevm/example-bun` | [Bun example API](/reference/bun) |
+| `apps/esbuild` | `@tevm/example-esbuild` | [esbuild example API](/reference/esbuild) |
+| `apps/mud` | `@tevm/example-mud` | [MUD guide](/guides/mud) |
+| `apps/next` | `@tevm/example-next` | [Next.js guide](/guides/next) |
+| `apps/svelte-ethers` | `svelte-ethers` | [SvelteKit guide](/guides/svelte-ethers) |
+| `apps/vite` | `@tevm/example-vite` | [Vite guide](/guides/vite) |
+
+All six are `private: true`. They are not published to npm; the package names exist so `pnpm --filter` can address
+them.
+
+## Tevm packages the examples depend on
+
+| Package | Used by | Purpose |
+| --- | --- | --- |
+| `tevm` | bun, next, svelte-ethers, vite, esbuild | Meta-package: `tevm/contract`, `tevm/memory-client`, and friends |
+| `@tevm/contract` | all except mud/next | Contract objects and typed action creators |
+| `@tevm/jsonrpc` | bun, next | `http` transport factory for fork configuration |
+| `@tevm/ethers` | vite, svelte-ethers | Ethers `Contract` typed from an ABI |
+| `@tevm/bun-plugin` | bun, esbuild | Solidity imports under Bun |
+| `@tevm/esbuild-plugin` | bun, esbuild | Solidity imports under esbuild |
+| `@tevm/vite-plugin` | esbuild, vite, svelte-ethers | Solidity imports under Vite/Rollup |
+| `@tevm/ts-plugin` | bun, esbuild, vite, svelte-ethers | Editor and `tsc` resolution of `.sol` imports |
+| `@tevm/config` | vite | `tevm.config.json` loading |
+| `@tevm/solc` | vite | solc bindings for the in-browser editor |
+
+See [Shared conventions](/reference/conventions) for the rules every app follows.
