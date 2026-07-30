@@ -14,6 +14,7 @@ const websiteUrl = 'https://tevm.sh';
  * @dev This will be exported again from the layout file.
  */
 export const METADATA_BASE: Metadata = {
+  metadataBase: new URL(websiteUrl),
   title: title,
   description: description,
   applicationName: title,
@@ -26,7 +27,7 @@ export const METADATA_BASE: Metadata = {
     siteName: title,
     title: title,
     description: description,
-    images: 'og-image.png',
+    images: '/og-image.png',
   },
 };
 

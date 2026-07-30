@@ -52,9 +52,6 @@ jobs:
   deploy:
     name: Deploy to Vercel
     needs: build
-    # Vercel's Git integration deploys examples.tevm.sh on every push to main.
-    # This job only runs when the repo is configured for CLI deploys instead
-    # (VERCEL_TOKEN present), so the two mechanisms never race.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -79,9 +76,12 @@ jobs:
           cache: pnpm
 
       - name: Deploy
-        if: ${{ env.VERCEL_TOKEN != '' }}
         working-directory: docs
         run: |
+          if [[ -z "$VERCEL_TOKEN" || -z "$VERCEL_ORG_ID" || -z "$VERCEL_PROJECT_ID" ]]; then
+            echo "::error::VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID are required for the production docs deployment."
+            exit 1
+          fi
           npx --yes vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
           npx --yes vercel@latest build --prod --token="$VERCEL_TOKEN"
           npx --yes vercel@latest deploy --prebuilt --prod --token="$VERCEL_TOKEN"

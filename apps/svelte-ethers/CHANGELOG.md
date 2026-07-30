@@ -1,4 +1,4 @@
-# svelte-ethers
+# @tevm/example-svelte-ethers
 
 ## 0.1.3
 

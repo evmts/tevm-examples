@@ -1,7 +1,14 @@
 {
   "name": "@tevm/example-mud",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
+  "description": "MUD application example for Tevm",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evmts/tevm-examples.git",
+    "directory": "apps/mud"
+  },
   "scripts": {
     "build": "pnpm --filter contracts run build && pnpm --filter client run build",
     "dev": "mprocs",

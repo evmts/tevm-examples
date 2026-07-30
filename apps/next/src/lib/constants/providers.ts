@@ -15,7 +15,7 @@ import { Chain } from '@/lib/types/providers';
 // TODO Create client here when top-level await is solved
 
 export const ALCHEMY_API_KEY =
-  process.env.ALCHEMY_API_KEY || '_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC';
+  process.env.ALCHEMY_API_KEY ?? '';
 
 // Chains that don't need an API key
 export const STANDALONE_RPC_CHAINS = [
