@@ -6,7 +6,7 @@
 "@tevm/example-vite": patch
 "client": patch
 "contracts": patch
-"svelte-ethers": patch
+"@tevm/example-svelte-ethers": patch
 ---
 
 Extract the Tevm examples into a standalone integration workspace that consumes published packages.

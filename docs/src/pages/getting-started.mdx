@@ -11,7 +11,7 @@ description: Clone, install, and run the Tevm example workspace
 | --- | --- | --- |
 | Node.js | `^24.0.0` (see [`.nvmrc`](https://github.com/evmts/tevm-examples/blob/main/.nvmrc)) | everything |
 | pnpm | `9.15.9` (pinned via `packageManager`) | everything |
-| Foundry | latest | `apps/vite` and `apps/mud` Solidity builds |
+| Foundry | `1.5.1` | `apps/vite` and `apps/mud` Solidity builds |
 | Bun | `^1.3` | running `apps/bun` interactively |
 
 ## Install
@@ -52,7 +52,7 @@ pnpm --filter @tevm/example-vite dev
 pnpm --filter @tevm/example-next dev
 pnpm --filter @tevm/example-bun dev
 pnpm --filter @tevm/example-esbuild dev
-pnpm --filter svelte-ethers dev
+pnpm --filter @tevm/example-svelte-ethers dev
 pnpm --filter @tevm/example-mud dev
 ```
 
@@ -62,7 +62,7 @@ pnpm --filter @tevm/example-mud dev
 | `apps/esbuild` | `@tevm/example-esbuild` |
 | `apps/mud` | `@tevm/example-mud` |
 | `apps/next` | `@tevm/example-next` |
-| `apps/svelte-ethers` | `svelte-ethers` |
+| `apps/svelte-ethers` | `@tevm/example-svelte-ethers` |
 | `apps/vite` | `@tevm/example-vite` |
 
 ## Installing Tevm in your own project
@@ -104,7 +104,7 @@ The exact ranges the examples pin are:
 ```
 
 :::note
-`tevm` is declared as a **peer dependency** (`"tevm": ">=1.0.0"`) in the apps that consume it, and satisfied by a
+`tevm` is declared as a **peer dependency** (`"tevm": "^1.0.0-next.149"`) in the apps that consume it, and satisfied by a
 dev dependency. That mirrors how a real integration would depend on Tevm and keeps the smoke test honest.
 :::
 

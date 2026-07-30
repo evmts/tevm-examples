@@ -9,7 +9,7 @@ export default defineConfig({
 	// so the MDX lives in `src/pages` and the default `srcDir: 'src'` applies.
 	// Static export: Vercel serves the generated HTML directly (2.x defaults to a Node server).
 	renderStrategy: 'full-static',
-	baseUrl: process.env.VERCEL_ENV === 'production' ? 'https://examples.tevm.sh' : process.env.VERCEL_URL,
+	baseUrl: 'https://examples.tevm.sh',
 
 	// vocs 2.x: `theme.accentColor` / `theme.colorScheme` were flattened onto the
 	// root config, and `accentColor` accepts a CSS `light-dark()` value.

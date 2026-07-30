@@ -11,10 +11,13 @@ const totalSupply = writable('')
 const ownerOf = writable('')
 const balanceOf = writable('')
 
-const tokenId = BigInt('114511829')
+const tokenId = BigInt(1)
 
-const provider = new JsonRpcProvider('https://goerli.optimism.io', 420)
-const ethersContract = new Contract(addresses[420], EthersMintExample.abi, provider)
+const provider = new JsonRpcProvider(
+	import.meta.env.VITE_RPC_URL ?? 'https://ethereum-rpc.publicnode.com',
+	1,
+)
+const ethersContract = new Contract(addresses[1], EthersMintExample.abi, provider)
 
 onMount(async () => {
 	totalSupply.set(await ethersContract.totalSupply())
@@ -39,4 +42,3 @@ onMount(async () => {
     <div>{$balanceOf?.toString()}</div>
   </div>
 </div>
-

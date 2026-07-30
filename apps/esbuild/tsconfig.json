@@ -21,6 +21,6 @@
 		"incremental": true,
 		"types": ["bun-types"]
 	},
-	"include": ["**/*.ts", "**/*.tsx"],
+	"include": ["**/*.ts", "**/*.tsx", "**/*.js"],
 	"exclude": ["node_modules"]
 }

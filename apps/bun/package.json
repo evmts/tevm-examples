@@ -1,7 +1,14 @@
 {
   "name": "@tevm/example-bun",
   "version": "0.0.1",
-  "private": true,
+  "private": false,
+  "description": "Bun example using Tevm Solidity imports and a forked memory client",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evmts/tevm-examples.git",
+    "directory": "apps/bun"
+  },
   "contributors": [
     "Will Cory <willcory10@gmail.com>"
   ],
@@ -30,7 +37,7 @@
     "vitest": "^4.1.6"
   },
   "peerDependencies": {
-    "tevm": ">=1.0.0"
+    "tevm": "^1.0.0-next.149"
   },
   "publishConfig": {
     "access": "public",

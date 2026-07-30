@@ -1,8 +1,9 @@
-# next-example
+# Tevm Next.js example
 
-Typescript build is currently broke (though app still runs) because this example project got deprioritized March 16th. We will update this example with working build, new features, and tevm bundler support in future.
-
-Reach out if you are interested in contributing
+A Next.js App Router application for inspecting contracts and simulating calls against a forked chain with a Tevm
+memory client. The app is part of the
+[`evmts/tevm-examples`](https://github.com/evmts/tevm-examples) integration workspace and is built in CI against
+published Tevm packages.
 
 ## Table of contents
 
@@ -118,26 +119,27 @@ The minimal steps to get started are:
 
 1. Clone the repository and navigate to this directory
    ```bash
-   git clone git@github.com:evmts/tevm-monorepo.git && cd tevm-monorepo/examples/next
+   git clone https://github.com/evmts/tevm-examples.git
+   cd tevm-examples/apps/next
    ```
 2. Install the dependencies (preferably with [pnpm](https://pnpm.io))
    ```bash
    pnpm install
    ```
-3. Copy the `.env.local.example` file to `.env.local` and fill in the required environment variables
+3. Create `.env.local` and add an Alchemy key for fork RPC calls. Explorer keys are optional, but improve ABI lookup
+   reliability for their corresponding chains.
    ```bash
-   cp .env.local.example .env.local
-   # Then edit .env.local
-   # ALCHEMY_API_KEY
-   # ETHERSCAN_API_KEY
-   # ARBISCAN_API_KEY
-   # BASESCAN_API_KEY
-   # OPTIMISTIC_ETHERSCAN_API_KEY
-   # POLYGONSCAN_API_KEY
-   # ZORA_SUPERSCAN_API_KEY
+   ALCHEMY_API_KEY=...
+   ETHERSCAN_API_KEY=...
+   ARBISCAN_API_KEY=...
+   BASESCAN_API_KEY=...
+   OPTIMISTIC_ETHERSCAN_API_KEY=...
+   POLYGONSCAN_API_KEY=...
    ```
 
-We're using Alchemy for better modularity [when creating providers](./src/lib/constants/providers.ts#L66) and [Tevm clients](./src/lib/tevm.ts#L322), but you can replace it with any other provider, and update the way urls are created in the two aforementioned files.
+The example uses Alchemy when [creating providers](./src/lib/constants/providers.ts) and
+[Tevm clients](./src/lib/store/use-provider.ts). You can replace it with another provider by updating the RPC URLs
+in those files.
 
 4. Run the development server
 

@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest'
+import { getAddress } from 'ethers'
+import { addresses } from './addresses'
 
-describe('sum test', () => {
-	it('adds 1 + 2 to equal 3', () => {
-		expect(1 + 2).toBe(3)
+describe('deployment addresses', () => {
+	it('contains valid Ethereum addresses for the configured chains', () => {
+		for (const address of Object.values(addresses)) {
+			expect(() => getAddress(address)).not.toThrow()
+		}
 	})
 })

@@ -14,7 +14,7 @@ documentation remains at [tevm.sh](https://tevm.sh).
 
 - Node.js 24 (the exact tested version is in `.nvmrc`)
 - pnpm 9
-- Foundry for the Solidity-backed Vite and MUD examples
+- Foundry 1.5.1 for the Solidity-backed Vite and MUD examples
 - Bun only when running the Bun example interactively
 
 ## Install
@@ -36,7 +36,7 @@ The apps live in [`apps/`](./apps/):
 ## Documentation site
 
 The site published at [examples.tevm.sh](https://examples.tevm.sh) lives in [`docs/`](./docs) and is built with
-[Vocs](https://vocs.dev) 2.7.0.
+[Vocs](https://vocs.dev) 2.7.2.
 
 ```sh
 pnpm docs:dev
@@ -59,15 +59,15 @@ and `RPC_URL_MAINNET` for the esbuild example.
 ## Published-package policy
 
 Cross-repository Tevm dependencies use caret ranges resolved from npm. The `tevm` meta-package is declared as a
-runtime peer where an example imports the node directly, and is installed as a development dependency for local
-validation. The only workspace dependency is the MUD client's link to its contracts package, because both live in
-this repository.
+runtime peer at `^1.0.0-next.149` where an example imports the node directly, and is installed as a development
+dependency for local validation. The only workspace dependency is the MUD client's link to its contracts package,
+because both live in this repository.
 
 ## Releases
 
-Changesets records release intent. Merges to `main` run the release workflow with npm provenance. The example
-workspaces are private applications, so they are versioned and tagged but are not published as npm libraries unless
-their `private` flags are deliberately removed.
+Changesets records release intent. Merges to `main` run the full lint, typecheck, build, test, and docs gates before
+the release action publishes the six `@tevm/example-*` packages with npm provenance. The docs and MUD's internal
+`client` and `contracts` workspaces remain private.
 
 ## License
 

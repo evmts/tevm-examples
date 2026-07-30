@@ -5,7 +5,7 @@ description: Using the Tevm Ethers adapter and Solidity imports inside a SvelteK
 
 # SvelteKit + Ethers
 
-**Source:** [`apps/svelte-ethers`](https://github.com/evmts/tevm-examples/tree/main/apps/svelte-ethers) · **Package:** `svelte-ethers`
+**Source:** [`apps/svelte-ethers`](https://github.com/evmts/tevm-examples/tree/main/apps/svelte-ethers) · **Package:** `@tevm/example-svelte-ethers`
 
 The smallest full-framework example: SvelteKit, a Solidity import, and `@tevm/ethers` — a drop-in `Contract` that
 takes its types from the compiled Solidity instead of from a hand-written interface.
@@ -14,9 +14,9 @@ takes its types from the compiled Solidity instead of from a hand-written interf
 
 ```bash
 pnpm install
-pnpm --filter svelte-ethers dev      # http://localhost:5173
-pnpm --filter svelte-ethers build
-pnpm --filter svelte-ethers check    # svelte-check
+pnpm --filter @tevm/example-svelte-ethers dev      # http://localhost:5173
+pnpm --filter @tevm/example-svelte-ethers build
+pnpm --filter @tevm/example-svelte-ethers check    # svelte-check
 ```
 
 ## Setup
@@ -51,10 +51,13 @@ const totalSupply = writable('')
 const ownerOf = writable('')
 const balanceOf = writable('')
 
-const tokenId = BigInt('114511829')
+const tokenId = BigInt(1)
 
-const provider = new JsonRpcProvider('https://goerli.optimism.io', 420)
-const ethersContract = new Contract(addresses[420], EthersMintExample.abi, provider)
+const provider = new JsonRpcProvider(
+  import.meta.env.VITE_RPC_URL ?? 'https://ethereum-rpc.publicnode.com',
+  1,
+)
+const ethersContract = new Contract(addresses[1], EthersMintExample.abi, provider)
 
 onMount(async () => {
   totalSupply.set(await ethersContract.totalSupply())
@@ -85,10 +88,8 @@ call it with a `string` instead of a `bigint`, or misspell the method, and the b
 
 Everything else — providers, signers, `BigInt` handling, event listeners — is unchanged Ethers v6.
 
-:::warning
-The page targets Optimism Goerli (chain id `420`), which has been shut down, so the reads will not resolve against a
-live endpoint. Repoint `addresses` and the `JsonRpcProvider` at a live chain to see values.
-:::
+The checked-in default uses a public Ethereum mainnet endpoint. Set `VITE_RPC_URL` to use your own provider and avoid
+public endpoint rate limits.
 
 :::note
 All work happens in `onMount`. The provider call is browser-only; doing it at module scope would run it during SSR

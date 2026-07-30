@@ -1,7 +1,14 @@
 {
 	"name": "@tevm/example-esbuild",
 	"version": "0.0.1",
-	"private": true,
+	"private": false,
+	"description": "esbuild example using Tevm Solidity imports and viem",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/evmts/tevm-examples.git",
+		"directory": "apps/esbuild"
+	},
 	"contributors": [
 		"Will Cory <willcory10@gmail.com>"
 	],

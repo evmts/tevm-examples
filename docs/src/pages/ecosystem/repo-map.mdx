@@ -37,7 +37,7 @@ esbuild, Vite, Next.js, SvelteKit, and MUD.
 
 - Cross-repository Tevm dependencies use **caret ranges resolved from npm** (`"tevm": "^1.0.0-next.149"`), never
   `workspace:` or `file:` protocols.
-- `tevm` is declared as a **peer dependency** (`">=1.0.0"`) where an app imports the node directly, and satisfied by a
+- `tevm` is declared as a **peer dependency** (`"^1.0.0-next.149"`) where an app imports the node directly, and satisfied by a
   dev dependency for local validation — the same shape a real integration would have.
 - The one exception is `apps/mud`, whose client links to its own contracts package. Both live in this repository, so
   that link is internal, not cross-repository.
@@ -55,9 +55,8 @@ esbuild, Vite, Next.js, SvelteKit, and MUD.
 ## Release flow
 
 Changesets records release intent in this repo. Merges to `main` run the release workflow with npm provenance. The
-example workspaces are private applications, so they are versioned and tagged but not published to npm unless their
-`private` flags are deliberately removed. In practice the useful output of a release here is the **CI signal**, not a
-package.
+six top-level applications are published as scoped `@tevm/example-*` source packages after the full workspace and
+docs gates pass. The docs and MUD's internal `client` and `contracts` workspaces remain private.
 
 ## Docs deployment
 
