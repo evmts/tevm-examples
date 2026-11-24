@@ -45,7 +45,6 @@ mattered:
 
 ## Deployment
 
-Vercel builds this directory with the commands in `vercel.json`. `.github/workflows/docs.yml` builds the site on
-every docs change and uploads the output as an artifact; it also contains a Vercel CLI deploy job that activates only
-if `VERCEL_TOKEN` / `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID` secrets are set, for repos not using Vercel's Git
-integration.
+Vercel's Git integration builds this directory with the commands in `vercel.json`. It deploys `main` to
+[examples.tevm.sh](https://examples.tevm.sh) and posts a preview deployment on each pull request.
+`.github/workflows/docs.yml` only builds the site on every docs change and uploads the output as an artifact.

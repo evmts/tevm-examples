@@ -22,6 +22,8 @@ concurrency:
   group: docs-${{ github.ref }}
   cancel-in-progress: true
 
+# Vercel's Git integration deploys examples.tevm.sh from main and previews from
+# pull requests. This workflow only proves the static site builds.
 jobs:
   build:
     name: Build docs site
@@ -48,40 +50,3 @@ jobs:
           name: docs-dist
           path: docs/dist/public
           retention-days: 7
-
-  deploy:
-    name: Deploy to Vercel
-    needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    environment:
-      name: docs-production
-      url: https://examples.tevm.sh
-    env:
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9.15.9
-          run_install: false
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Deploy
-        working-directory: docs
-        run: |
-          if [[ -z "$VERCEL_TOKEN" || -z "$VERCEL_ORG_ID" || -z "$VERCEL_PROJECT_ID" ]]; then
-            echo "::error::VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID are required for the production docs deployment."
-            exit 1
-          fi
-          npx --yes vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
-          npx --yes vercel@latest build --prod --token="$VERCEL_TOKEN"
-          npx --yes vercel@latest deploy --prebuilt --prod --token="$VERCEL_TOKEN"

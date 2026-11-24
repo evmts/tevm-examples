@@ -30,7 +30,9 @@ jobs:
           cache: pnpm
           registry-url: https://registry.npmjs.org
 
-      - run: npm install --global npm@latest
+      # npm trusted publishing needs npm >= 11.5.1. npm 12 requires Node >= 24.15,
+      # newer than the Node pinned in .nvmrc, so stay on the npm 11 line.
+      - run: npm install --global npm@^11.5.1
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
