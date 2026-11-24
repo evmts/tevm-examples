@@ -1,6 +1,6 @@
 {
   "name": "@tevm/example-bun",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": false,
   "description": "Bun example using Tevm Solidity imports and a forked memory client",
   "license": "MIT",

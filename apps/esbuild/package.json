@@ -1,6 +1,6 @@
 {
 	"name": "@tevm/example-esbuild",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"private": false,
 	"description": "esbuild example using Tevm Solidity imports and viem",
 	"license": "MIT",
