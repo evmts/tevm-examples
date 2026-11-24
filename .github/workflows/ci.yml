@@ -26,13 +26,16 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
 
-      # MUD 2.2.23 calls `forge config --json`, which Foundry 1.31 removed.
-      - uses: foundry-rs/foundry-toolchain@v1
+      # The bun example's e2e test runs under `bun test` so its preload can
+      # compile Solidity imports with @tevm/bun-plugin.
+      - uses: oven-sh/setup-bun@v2
         with:
-          version: v1.5.1
+          bun-version: 1.4.1
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm build
       - run: pnpm test
+      - run: pnpm test:e2e
+      - run: pnpm bench

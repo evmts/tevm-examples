@@ -5,7 +5,7 @@ description: How the Tevm bundler plugins turn a .sol file into a typed contract
 
 # Solidity imports
 
-Every app in this repository except `apps/next` and `apps/mud` uses the same core Tevm feature: importing a
+Every app in this repository except `apps/next` uses the same core Tevm feature: importing a
 `.sol` file directly from JavaScript or TypeScript.
 
 ```ts
@@ -96,19 +96,19 @@ choke on the import specifier.
 
 ## Configuring solc resolution
 
-`tevm.config.json` controls how Solidity sources and remappings are resolved. `apps/vite` uses a Foundry project,
-so it only needs one flag:
+`tevm.config.json` controls how Solidity sources and remappings are resolved. None of the examples need one for
+resolution: `import "@openzeppelin/contracts/token/ERC721/ERC721.sol"` inside your Solidity resolves through Node
+module resolution from `node_modules`. Add `remappings` or `libs` when a project needs other paths:
 
 ```json
 {
-  "foundryProject": true,
-  "jsonAsConst": ["**/foo.json"]
+  "libs": ["lib"],
+  "remappings": { "solmate/": "lib/solmate/src/" }
 }
 ```
 
-With `foundryProject: true` the plugin reads `foundry.toml` for `remappings`, `src`, and `libs`, so
-`import "@openzeppelin/contracts/token/ERC721/ERC721.sol"` inside your Solidity resolves exactly as it does under
-`forge build`.
+`"foundryProject": true` reads these values from `foundry.toml` instead, but `@tevm/config` 1.0.0-next.148 runs
+`forge config --json`, which Foundry 1.31 removed. Use explicit `libs` and `remappings` until a fixed release ships.
 
 ## What you get back
 

@@ -12,3 +12,7 @@ To learn more about [Vite](https://vitejs.dev/), [RainbowKit](https://rainbowkit
 - [wagmi Examples](https://wagmi.sh/examples/connect-wallet) – a suite of simple examples using wagmi.
 - [RainbowKit Documentation](https://rainbowkit.com/docs/introduction) – learn more about RainbowKit (configuration, theming, advanced usage, etc).
 - [Vite Documentation](https://vitejs.dev/) – learn about Vite features and API.
+
+## Testing
+
+`pnpm test` runs unit and fast-check fuzz tests for `stringify`. `pnpm bench` benchmarks it. After `pnpm build`, `pnpm test:e2e` starts `vite preview` and checks that `index.html` and every chunk it references load. See [Testing](https://examples.tevm.sh/reference/testing) for details.

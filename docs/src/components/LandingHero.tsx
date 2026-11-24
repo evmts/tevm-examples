@@ -11,7 +11,7 @@ export function LandingHero() {
 					Tevm examples that run against <span className="ex-grad">what npm actually serves.</span>
 				</h1>
 				<p className="ex-lede">
-					Six standalone apps — Bun, esbuild, Vite, Next.js, SvelteKit, and MUD — each installing Tevm from the
+					Five standalone apps — Bun, esbuild, Vite, Next.js, and SvelteKit — each installing Tevm from the
 					published registry with zero workspace links. Copy any of them as a starting point, or treat the repo as
 					what it also is: Tevm's end-to-end integration smoke test.
 				</p>

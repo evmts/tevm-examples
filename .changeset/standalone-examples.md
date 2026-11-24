@@ -1,11 +1,8 @@
 ---
 "@tevm/example-bun": patch
 "@tevm/example-esbuild": patch
-"@tevm/example-mud": patch
 "@tevm/example-next": patch
 "@tevm/example-vite": patch
-"client": patch
-"contracts": patch
 "@tevm/example-svelte-ethers": patch
 ---
 

@@ -17,7 +17,8 @@
 		"dev": "vite dev",
 		"preview": "vite preview",
 		"test": "vitest run",
-		"typecheck": "pnpm run check"
+		"typecheck": "pnpm run check",
+		"test:e2e": "node ../../scripts/smoke-http.mjs --marker \"Welcome to SvelteKit\" --marker \"totalSupply():\" -- pnpm exec vite preview --host 127.0.0.1 --port {port} --strictPort"
 	},
 	"dependencies": {
 		"@tevm/contract": "^1.0.0-next.149",

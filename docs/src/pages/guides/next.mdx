@@ -72,5 +72,6 @@ app accepts to keep clients synced with `localStorage`; a production deployment 
 route instead. WhatsABI also struggles with proxy contracts — the app does not follow implementation pointers.
 :::
 
-Its own `README.md` notes the TypeScript build was deprioritised in favour of the runtime behaviour; the app runs, and
-`pnpm test` passes with `--passWithNoTests`. Contributions to tighten it up are welcome.
+`pnpm test` covers `formatInputValue`, the helper that turns form input into contract arguments, with unit and
+fast-check fuzz tests. Array inputs accept any run of commas and spaces as a separator, so `1, 2` parses as
+`[1n, 2n]`. `pnpm test:e2e` starts `next start` and checks that the home page and its assets load.

@@ -172,3 +172,7 @@ See [Contributing](../../README.md#contributing-💻) at the root of the reposit
 ## License
 
 See [License](../../LICENSE) at the root of the repository.
+
+## Testing
+
+`pnpm test` runs unit and fast-check fuzz tests for `formatInputValue`. `pnpm bench` benchmarks it. After `pnpm build`, `pnpm test:e2e` starts `next start` and checks that the home page and its assets load. See [Testing](https://examples.tevm.sh/reference/testing) for details.

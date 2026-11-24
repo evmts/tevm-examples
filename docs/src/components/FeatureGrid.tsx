@@ -5,9 +5,9 @@ const features = [
 		code: 'npm install @tevm/contract',
 	},
 	{
-		title: 'Six toolchains',
-		body: 'Bun, esbuild, Vite, Next.js, SvelteKit, and MUD — the same Tevm APIs working across runtimes and bundlers.',
-		code: 'apps/{bun,esbuild,vite,next,svelte-ethers,mud}',
+		title: 'Five toolchains',
+		body: 'Bun, esbuild, Vite, Next.js, and SvelteKit — the same Tevm APIs working across runtimes and bundlers.',
+		code: 'apps/{bun,esbuild,vite,next,svelte-ethers}',
 	},
 	{
 		title: 'Solidity imports everywhere',

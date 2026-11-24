@@ -11,8 +11,8 @@ description: Clone, install, and run the Tevm example workspace
 | --- | --- | --- |
 | Node.js | `^24.0.0` (see [`.nvmrc`](https://github.com/evmts/tevm-examples/blob/main/.nvmrc)) | everything |
 | pnpm | `9.15.9` (pinned via `packageManager`) | everything |
-| Foundry | `1.5.1` | `apps/vite` and `apps/mud` Solidity builds |
-| Bun | `^1.3` | running `apps/bun` interactively |
+| Bun | `1.4` | `apps/bun` e2e test and interactive runs |
+| Foundry | any | optional: `apps/vite` `build:contracts` and deploy scripts |
 
 ## Install
 
@@ -32,8 +32,12 @@ produce a lockfile diff that CI rejects.
 pnpm lint       # biome
 pnpm typecheck  # tsc --noEmit in every app
 pnpm build      # bundles every app
-pnpm test       # vitest in every app
+pnpm test       # vitest unit and fuzz tests in every app
+pnpm test:e2e   # offline end-to-end smoke test of every built app
+pnpm bench      # vitest benchmarks for the next and vite helpers
 ```
+
+See [Testing](/reference/testing) for what each e2e test checks.
 
 Tests that need a real RPC endpoint are skipped unless the corresponding environment variable is set:
 
@@ -53,14 +57,12 @@ pnpm --filter @tevm/example-next dev
 pnpm --filter @tevm/example-bun dev
 pnpm --filter @tevm/example-esbuild dev
 pnpm --filter @tevm/example-svelte-ethers dev
-pnpm --filter @tevm/example-mud dev
 ```
 
 | App directory | Package name |
 | --- | --- |
 | `apps/bun` | `@tevm/example-bun` |
 | `apps/esbuild` | `@tevm/example-esbuild` |
-| `apps/mud` | `@tevm/example-mud` |
 | `apps/next` | `@tevm/example-next` |
 | `apps/svelte-ethers` | `@tevm/example-svelte-ethers` |
 | `apps/vite` | `@tevm/example-vite` |

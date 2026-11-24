@@ -13,15 +13,17 @@
 		"provenance": true
 	},
 	"scripts": {
-		"build": "pnpm --filter @tevm/example-bun build && pnpm --filter @tevm/example-esbuild build && pnpm --filter @tevm/example-mud build && pnpm --filter @tevm/example-next build && pnpm --filter @tevm/example-svelte-ethers build && pnpm --filter @tevm/example-vite build",
+		"bench": "pnpm --filter @tevm/example-next bench && pnpm --filter @tevm/example-vite bench",
+		"build": "pnpm --filter @tevm/example-bun build && pnpm --filter @tevm/example-esbuild build && pnpm --filter @tevm/example-next build && pnpm --filter @tevm/example-svelte-ethers build && pnpm --filter @tevm/example-vite build",
 		"changeset": "changeset",
 		"docs:build": "pnpm --filter @tevm/examples-docs build",
 		"docs:dev": "pnpm --filter @tevm/examples-docs dev",
 		"docs:preview": "pnpm --filter @tevm/examples-docs preview",
 		"lint": "biome lint .",
 		"release": "changeset publish",
-		"test": "pnpm --filter @tevm/example-bun test && pnpm --filter @tevm/example-esbuild test && pnpm --filter @tevm/example-mud test && pnpm --filter @tevm/example-next test && pnpm --filter @tevm/example-svelte-ethers test && pnpm --filter @tevm/example-vite test",
-		"typecheck": "pnpm --filter @tevm/examples-docs typecheck && pnpm --filter @tevm/example-bun typecheck && pnpm --filter @tevm/example-esbuild typecheck && pnpm --filter @tevm/example-mud typecheck && pnpm --filter @tevm/example-next typecheck && pnpm --filter @tevm/example-svelte-ethers typecheck && pnpm --filter @tevm/example-vite typecheck"
+		"test": "pnpm --filter @tevm/example-bun test && pnpm --filter @tevm/example-esbuild test && pnpm --filter @tevm/example-next test && pnpm --filter @tevm/example-svelte-ethers test && pnpm --filter @tevm/example-vite test",
+		"test:e2e": "pnpm --filter @tevm/example-bun test:e2e && pnpm --filter @tevm/example-esbuild test:e2e && pnpm --filter @tevm/example-next test:e2e && pnpm --filter @tevm/example-svelte-ethers test:e2e && pnpm --filter @tevm/example-vite test:e2e",
+		"typecheck": "pnpm --filter @tevm/examples-docs typecheck && pnpm --filter @tevm/example-bun typecheck && pnpm --filter @tevm/example-esbuild typecheck && pnpm --filter @tevm/example-next typecheck && pnpm --filter @tevm/example-svelte-ethers typecheck && pnpm --filter @tevm/example-vite typecheck"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.15",
@@ -37,10 +39,5 @@
 		"typescript": "^6.0.3",
 		"vitest": "^4.1.6",
 		"ws": "^8.18.3"
-	},
-	"pnpm": {
-		"overrides": {
-			"better-sqlite3": "12.8.0"
-		}
 	}
 }

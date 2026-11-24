@@ -5,7 +5,6 @@ const sites = [
 	{ name: 'logger.tevm.sh', href: 'https://logger.tevm.sh', desc: 'Structured EVM logging' },
 	{ name: 'test.tevm.sh', href: 'https://test.tevm.sh', desc: 'Matchers and test utilities' },
 	{ name: 'ethers.tevm.sh', href: 'https://ethers.tevm.sh', desc: 'The ethers.js adapter' },
-	{ name: 'mud.tevm.sh', href: 'https://mud.tevm.sh', desc: 'Tevm + MUD integration' },
 	{ name: 'cli.tevm.sh', href: 'https://cli.tevm.sh', desc: 'The tevm command line' },
 	{ name: 'bundler.tevm.sh', href: 'https://bundler.tevm.sh', desc: 'Solidity imports for your bundler' },
 	{ name: 'examples.tevm.sh', href: 'https://examples.tevm.sh', desc: 'Runnable example apps', current: true },

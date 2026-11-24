@@ -67,9 +67,14 @@ const formatBool = (value: string | number): boolean => {
   throw new Error('Invalid boolean');
 };
 
-// Parse an input supposed to be an array into a javascript array
+// Parse an input supposed to be an array into a javascript array.
+// Any run of commas and whitespace separates items, so "1, 2" is [1, 2];
+// splitting on single characters left empty items that BigInt('') read as 0.
 const parseArrayInput = (input: string | number) => {
-  return input.toString().split(/,| /);
+  return input
+    .toString()
+    .split(/[\s,]+/)
+    .filter((item) => item !== '');
 };
 
 // Make sure to get a name for any function, so we can call it with Tevm
