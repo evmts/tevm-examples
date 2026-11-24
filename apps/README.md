@@ -4,7 +4,6 @@ Example applications for Tevm. Each app has its own README and consumes Tevm pac
 
 - [Bun](./bun)
 - [esbuild](./esbuild)
-- [MUD](./mud)
 - [Next.js](./next)
 - [SvelteKit and Ethers](./svelte-ethers)
 - [Vite and React](./vite)

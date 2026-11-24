@@ -17,7 +17,8 @@
 		"build": "NODE_ENV=production node ./build.js",
 		"dev": "pnpm run build && node ./dist/index.js",
 		"test": "vitest run",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"test:e2e": "node e2e/bundle.e2e.mjs"
 	},
 	"dependencies": {
 		"@tevm/contract": "^1.0.0-next.149",

@@ -42,8 +42,8 @@ build({
 })
 ```
 
-`esbuildPluginTevm()` takes no required options. It reads `foundry.toml` (`solc = "0.8.20"` here) for the compiler
-version, and resolves `@openzeppelin/contracts/...` imports inside the Solidity through Node resolution.
+`esbuildPluginTevm()` takes no required options. It compiles with the `solc` npm package installed in the workspace
+and resolves `@openzeppelin/contracts/...` imports inside the Solidity through Node resolution.
 
 ## Reading a contract
 

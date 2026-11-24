@@ -100,10 +100,13 @@ Full TypeChecking will be available soon in one of the next few releases of Tevm
 
 ## ⭐ Github
 
-If you like Tevm give it a ⭐ at the [Tevm monorepo](https://github.com/evmts/tevm-monorepo)
+If you like Tevm give it a ⭐ at the [Tevm monorepo](https://github.com/evmts/tevm)
 
 ## 🔗 See also
 
 - Check out [Next example](https://github.com/orgs/tevm/repositories) for an example of Tevm wagmi and Next
-- Check out [Vite example](https://github.com/evmts/tevm-monorepo/tree/main/examples/vite) for an example of Tevm wagmi and Vite
+- Check out [Vite example](https://github.com/evmts/tevm/tree/main/examples/vite) for an example of Tevm wagmi and Vite
 
+## Testing
+
+Run `pnpm build`, then `pnpm test:e2e`. The e2e test runs `dist/index.js` against a local JSON-RPC stub and checks the `ownerOf(1)` call and its decoded result. It needs no RPC endpoint. See [Testing](https://examples.tevm.sh/reference/testing) for details.

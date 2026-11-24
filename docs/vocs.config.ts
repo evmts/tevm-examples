@@ -31,7 +31,6 @@ export default defineConfig({
 				{ text: 'logger.tevm.sh', link: 'https://logger.tevm.sh' },
 				{ text: 'test.tevm.sh', link: 'https://test.tevm.sh' },
 				{ text: 'ethers.tevm.sh', link: 'https://ethers.tevm.sh' },
-				{ text: 'mud.tevm.sh', link: 'https://mud.tevm.sh' },
 				{ text: 'cli.tevm.sh', link: 'https://cli.tevm.sh' },
 				{ text: 'bundler.tevm.sh', link: 'https://bundler.tevm.sh' },
 				{ text: 'examples.tevm.sh', link: 'https://examples.tevm.sh' },
@@ -42,7 +41,7 @@ export default defineConfig({
 			items: [
 				{ text: 'Tevm docs', link: 'https://tevm.sh' },
 				{ text: 'Tevm Node docs', link: 'https://node.tevm.sh' },
-				{ text: 'tevm-monorepo', link: 'https://github.com/evmts/tevm-monorepo' },
+				{ text: 'evmts/tevm', link: 'https://github.com/evmts/tevm' },
 				{ text: 'tevm-examples', link: 'https://github.com/evmts/tevm-examples' },
 			],
 		},
@@ -68,7 +67,6 @@ export default defineConfig({
 				{ text: 'Vite + React', link: '/guides/vite' },
 				{ text: 'Next.js', link: '/guides/next' },
 				{ text: 'SvelteKit + Ethers', link: '/guides/svelte-ethers' },
-				{ text: 'MUD', link: '/guides/mud' },
 			],
 		},
 		{
@@ -79,6 +77,7 @@ export default defineConfig({
 				{ text: 'Bun example API', link: '/reference/bun' },
 				{ text: 'esbuild example API', link: '/reference/esbuild' },
 				{ text: 'Shared conventions', link: '/reference/conventions' },
+				{ text: 'Testing', link: '/reference/testing' },
 			],
 		},
 	],

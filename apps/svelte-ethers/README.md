@@ -36,3 +36,7 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+## Testing
+
+After `pnpm build`, `pnpm test:e2e` starts `vite preview` and checks that the server-rendered page and its entry modules load. See [Testing](https://examples.tevm.sh/reference/testing) for details.

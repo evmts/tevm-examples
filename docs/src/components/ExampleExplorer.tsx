@@ -52,14 +52,6 @@ const examples: readonly Example[] = [
 		pkgs: ['@tevm/contract', '@tevm/ethers', 'ethers'],
 		scaffold: 'pnpm dlx degit evmts/tevm-examples/apps/svelte-ethers my-app',
 	},
-	{
-		name: 'apps/mud',
-		stack: 'MUD',
-		guide: '/guides/mud',
-		desc: 'A React MUD application — onchain state synced to the client with Tevm underneath.',
-		pkgs: ['@latticexyz/store', '@tevm/contract', 'viem'],
-		scaffold: 'pnpm dlx degit evmts/tevm-examples/apps/mud my-app',
-	},
 ]
 
 const stacks = ['All', ...Array.from(new Set(examples.map((e) => e.stack)))] as const

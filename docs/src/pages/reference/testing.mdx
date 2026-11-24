@@ -1,0 +1,83 @@
+---
+title: Testing
+description: Unit, fuzz, end-to-end, and benchmark checks for every example app
+---
+
+# Testing
+
+Each example is a smoke test of the published Tevm packages. CI runs four layers on every pull request and every push
+to `main`, and none of them needs an RPC endpoint.
+
+```bash
+pnpm build      # e2e tests run against build output
+pnpm test       # vitest unit and fuzz tests
+pnpm test:e2e   # end-to-end smoke tests
+pnpm bench      # vitest benchmarks
+```
+
+## End-to-end tests
+
+Every app has a `test:e2e` script. Run one with `pnpm --filter @tevm/example-<name> test:e2e` after building it.
+
+| App | Command | What it proves |
+| --- | --- | --- |
+| `bun` | `bun test ./e2e/mint.e2e.ts` | `@tevm/bun-plugin` compiles `ExampleContract.sol` with bytecode. The test deploys it to a memory EVM, mints a token, and reads `totalSupply`, `ownerOf`, and `balanceOf`. |
+| `esbuild` | `node e2e/bundle.e2e.mjs` | `dist/index.js` sends `ownerOf(1)` to a local JSON-RPC stub with calldata derived from the compiled ABI, then decodes and prints the owner. |
+| `next` | `next start` + `scripts/smoke-http.mjs` | The production server renders the home page and serves every referenced script and stylesheet. |
+| `svelte-ethers` | `vite preview` + `scripts/smoke-http.mjs` | SvelteKit server-renders the page and serves its entry modules. |
+| `vite` | `vite preview` + `scripts/smoke-http.mjs` | The static build serves `index.html` and every chunk it references. |
+
+`scripts/smoke-http.mjs` picks a free port, substitutes it for `{port}` in the server command, waits up to 90 seconds
+for `/` to return 200, checks each `--marker` string, and fetches every same-origin `<script src>`, stylesheet,
+`modulepreload` link, and inline `import("…")`. Set `SMOKE_TIMEOUT_MS` to change the wait.
+
+### Deployable contracts in the Bun test
+
+The Tevm bundler emits bytecode only for files ending in `.s.sol`. `apps/bun/e2e/DeployableExampleContract.s.sol`
+inherits `ExampleContract` without changes, so the test deploys the same code the example ships.
+
+The test sends `mint()` with `tevmCall` and `encodeFunctionData` rather than `tevmContract`. In
+`@tevm/actions` 1.0.0-next.149, `tevmContract` validates `abi` with an `abitype/zod` schema built on zod 3 inside a
+zod 4 object, and every call throws `Invalid element at key "abi": expected a Zod schema`. The
+[`evmts/tevm`](https://github.com/evmts/tevm) source no longer imports `abitype/zod`; switch back once a fixed
+release is published.
+
+## Fuzz tests
+
+`apps/next/src/lib/utils.fuzz.spec.ts` and `apps/vite/src/utils/stringify.fuzz.spec.ts` use
+[fast-check](https://fast-check.dev) with a fixed seed so CI is deterministic. Explore with more cases or another seed:
+
+```bash
+FUZZ_SEED=7 FUZZ_RUNS=5000 pnpm --filter @tevm/example-next test
+```
+
+| Property | Helper |
+| --- | --- |
+| Any `uint256` in decimal round-trips to the same `bigint` | `formatInputValue` |
+| `uint256[]` input joined by any mix of commas and spaces parses to the original list | `formatInputValue` |
+| Every even-length hex string is accepted unchanged as `bytes` | `formatInputValue` |
+| Any boolean spelling other than `true`, `false`, `1`, `0` is rejected | `formatInputValue` |
+| Nested JSON with bigints never throws and encodes each bigint as a decimal string | `stringify` |
+| Bigint-free values match `JSON.stringify` output, including indentation | `stringify` |
+
+The second property found that `1, 2` parsed as `[1n, 0n, 2n]`: splitting on single commas or spaces produced an
+empty item, and `BigInt('')` is `0n`. The parser now splits on runs of separators.
+
+## Benchmarks
+
+`pnpm bench` runs `vitest bench --run` in `apps/next` and `apps/vite`. CI runs it to keep the benchmarks compiling;
+it does not compare timings.
+
+| Benchmark | File |
+| --- | --- |
+| `formatInputValue` on a `uint256`, a 256-item `uint256[]`, and an address | `apps/next/src/lib/utils.bench.ts` |
+| `stringify` on a receipt with 64 bigint logs, against a `JSON.stringify` baseline | `apps/vite/src/utils/stringify.bench.ts` |
+
+## RPC-backed tests
+
+Two vitest tests read real mainnet state and are skipped unless their variable is set:
+
+| App | Variable |
+| --- | --- |
+| `bun` | `RPC_URL` |
+| `esbuild` | `RPC_URL_MAINNET` |

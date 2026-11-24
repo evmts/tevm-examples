@@ -25,3 +25,9 @@ describe(formatInputValue.name, () => {
     expect(() => formatInputValue('bytes', 'not-hex')).toThrow('Invalid bytes');
   });
 });
+
+describe(`${formatInputValue.name} array separators`, () => {
+  it('treats a comma followed by a space as one separator', () => {
+    expect(formatInputValue('uint256[]', '1, 2')).toEqual([BigInt(1), BigInt(2)]);
+  });
+});

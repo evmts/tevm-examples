@@ -12,11 +12,11 @@ Tevm is developed across several repositories. This page explains which one owns
 
 | Repository | Contains | Consumes Tevm via |
 | --- | --- | --- |
-| [`evmts/tevm-monorepo`](https://github.com/evmts/tevm-monorepo) | The Tevm packages themselves: `tevm`, `@tevm/contract`, `@tevm/ethers`, `@tevm/jsonrpc`, the bundler plugins, `@tevm/ts-plugin`, and the core docs sites | `workspace:^` links |
+| [`evmts/tevm`](https://github.com/evmts/tevm) | The Tevm packages themselves: `tevm`, `@tevm/contract`, `@tevm/ethers`, `@tevm/jsonrpc`, the bundler plugins, `@tevm/ts-plugin`, and the core docs sites | `workspace:^` links |
 | [`evmts/tevm-examples`](https://github.com/evmts/tevm-examples) (this repo) | Every standalone example application, plus this documentation site | published npm versions |
 
 `tevm-examples` was extracted from the monorepo **with its Git history intact** — `git log` on any app still shows
-the commits made while it lived under `tevm-monorepo/examples/`.
+the commits made while it lived under `tevm-monorepo/examples/` (the monorepo is now `evmts/tevm`).
 
 ## Why it was split out
 
@@ -26,12 +26,12 @@ tree, not a release. Three problems followed from that:
 1. **Packaging bugs were invisible.** A missing `exports` entry, a wrong `types` path, or a file left out of
    `files` never breaks a workspace link — it breaks the first user who runs `npm install`.
 2. **Example code drifted ahead of the docs.** Snippets copied from the examples used APIs that had not shipped yet.
-3. **Monorepo CI paid for it.** Six full application builds, a Foundry install, and a MUD toolchain ran on every core
+3. **Monorepo CI paid for it.** Six full application builds and a Foundry install ran on every core
    package change.
 
 After the split, each app installs `tevm@^1.0.0-next.x` from npm like any other consumer. That makes
 `pnpm install && pnpm build && pnpm test` in this repo a genuine end-to-end check of a published release, across Bun,
-esbuild, Vite, Next.js, SvelteKit, and MUD.
+esbuild, Vite, Next.js, and SvelteKit.
 
 ## The dependency policy
 
@@ -39,8 +39,13 @@ esbuild, Vite, Next.js, SvelteKit, and MUD.
   `workspace:` or `file:` protocols.
 - `tevm` is declared as a **peer dependency** (`"^1.0.0-next.149"`) where an app imports the node directly, and satisfied by a
   dev dependency for local validation — the same shape a real integration would have.
-- The one exception is `apps/mud`, whose client links to its own contracts package. Both live in this repository, so
-  that link is internal, not cross-repository.
+- No app links to another workspace package.
+
+## Removed examples
+
+`apps/mud` was removed in November 2026. [MUD](https://mud.dev) is no longer maintained, and `@tevm/mud` was
+archived without an npm release, so the example could not run against published packages. Its last version is in
+the Git history of this repository.
 
 ## What lives where when you have a question
 
@@ -49,14 +54,14 @@ esbuild, Vite, Next.js, SvelteKit, and MUD.
 | The Tevm API — clients, actions, contracts | [tevm.sh](https://tevm.sh) |
 | Tevm Node internals and architecture | [node.tevm.sh](https://node.tevm.sh) |
 | A working app to copy from | this site, or [`apps/`](https://github.com/evmts/tevm-examples/tree/main/apps) |
-| To report a Tevm bug | [`tevm-monorepo` issues](https://github.com/evmts/tevm-monorepo/issues) |
+| To report a Tevm bug | [`evmts/tevm` issues](https://github.com/evmts/tevm/issues) |
 | To report that an example is broken | [`tevm-examples` issues](https://github.com/evmts/tevm-examples/issues) |
 
 ## Release flow
 
 Changesets records release intent in this repo. Merges to `main` run the release workflow with npm provenance. The
-six top-level applications are published as scoped `@tevm/example-*` source packages after the full workspace and
-docs gates pass. The docs and MUD's internal `client` and `contracts` workspaces remain private.
+five applications are published as scoped `@tevm/example-*` source packages after the full workspace, e2e, and
+docs gates pass. The docs workspace remains private.
 
 ## Docs deployment
 

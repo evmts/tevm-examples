@@ -17,12 +17,11 @@ For the **Tevm API itself** — `createMemoryClient`, actions, `Contract`, the b
 | --- | --- | --- |
 | `apps/bun` | `@tevm/example-bun` | [Bun example API](/reference/bun) |
 | `apps/esbuild` | `@tevm/example-esbuild` | [esbuild example API](/reference/esbuild) |
-| `apps/mud` | `@tevm/example-mud` | [MUD guide](/guides/mud) |
 | `apps/next` | `@tevm/example-next` | [Next.js guide](/guides/next) |
 | `apps/svelte-ethers` | `@tevm/example-svelte-ethers` | [SvelteKit guide](/guides/svelte-ethers) |
 | `apps/vite` | `@tevm/example-vite` | [Vite guide](/guides/vite) |
 
-All six are public source packages released with npm provenance. The package names also work as `pnpm --filter`
+All five are public source packages released with npm provenance. The package names also work as `pnpm --filter`
 selectors in this workspace.
 
 ## Tevm packages the examples depend on
@@ -30,7 +29,7 @@ selectors in this workspace.
 | Package | Used by | Purpose |
 | --- | --- | --- |
 | `tevm` | bun, next, svelte-ethers, vite, esbuild | Meta-package: `tevm/contract`, `tevm/memory-client`, and friends |
-| `@tevm/contract` | all except mud/next | Contract objects and typed action creators |
+| `@tevm/contract` | all except next | Contract objects and typed action creators |
 | `@tevm/jsonrpc` | bun, next | `http` transport factory for fork configuration |
 | `@tevm/ethers` | vite, svelte-ethers | Ethers `Contract` typed from an ABI |
 | `@tevm/bun-plugin` | bun, esbuild | Solidity imports under Bun |

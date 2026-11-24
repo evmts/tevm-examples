@@ -12,9 +12,9 @@ These rules are enforced by CI or by review. Follow them when adding an app or c
 - **npm only.** Tevm packages are installed from npm with caret ranges (`^1.0.0-next.149`). `workspace:`, `file:`,
   and `link:` protocols pointing at `tevm-monorepo` are not allowed — they defeat the purpose of this repository
   ([why](/ecosystem/repo-map)).
-- **`tevm` is a peer dependency.** Apps that import the node declare `"tevm": ">=1.0.0"` in `peerDependencies` and
+- **`tevm` is a peer dependency.** Apps that import the node declare `"tevm": "^1.0.0-next.149"` in `peerDependencies` and
   install a concrete version in `devDependencies` for local validation.
-- **The one internal link** is `apps/mud/packages/client` → `apps/mud/packages/contracts`, because both live here.
+- **No internal links.** Apps do not depend on each other.
 - **pnpm 9.15.9**, pinned by `packageManager` and enabled via `corepack enable`. Installing with another major
   produces a lockfile diff CI rejects.
 
@@ -30,8 +30,9 @@ These rules are enforced by CI or by review. Follow them when adding an app or c
 }
 ```
 
-The root `build`, `test`, and `typecheck` scripts fan out to every app by package name, and CI runs
-`pnpm lint && pnpm typecheck && pnpm build && pnpm test`. An app with a missing script breaks the fan-out. Use
+The root `build`, `test`, `test:e2e`, and `typecheck` scripts fan out to every app by package name, and CI runs
+`pnpm lint && pnpm typecheck && pnpm build && pnpm test && pnpm test:e2e && pnpm bench`. An app with a missing script
+breaks the fan-out. Use
 `vitest run --passWithNoTests` if there is genuinely nothing to test yet.
 
 ## Network access in tests

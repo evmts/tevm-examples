@@ -12,7 +12,8 @@ an in-browser Solidity editor that compiles with solc in a Web Worker.
 
 ## Run it
 
-Foundry is required, because the Solidity is a real Foundry project.
+Foundry is optional. The Vite build compiles Solidity with the `solc` npm package; install Foundry only to run
+`build:contracts` or the deploy scripts.
 
 ```bash
 pnpm install
@@ -70,17 +71,21 @@ Why each non-obvious plugin is there:
 - **`as any` on `vitePluginTevm`** — the plugin is typed against the Vite version it was published with. When the app
   runs a newer Vite major, the structural `Plugin` types disagree even though the runtime contract is unchanged.
 
-## Foundry resolution
+## Tevm configuration
 
 ```json [tevm.config.json]
 {
-  "foundryProject": true,
   "jsonAsConst": ["**/foo.json"]
 }
 ```
 
-`foundryProject: true` makes the Tevm compiler read `foundry.toml`, so remappings behave identically in `forge build`
-and in Vite. `jsonAsConst` makes matching JSON imports typed as literals instead of widened `string`/`number`.
+`jsonAsConst` makes matching JSON imports typed as literals instead of widened `string`/`number`. Solidity imports
+such as `@openzeppelin/contracts/...` resolve through Node module resolution, so the build does not need Foundry.
+
+:::warning
+Do not set `"foundryProject": true` with Foundry 1.31 or newer. `@tevm/config` 1.0.0-next.148 loads Foundry settings
+with `forge config --json`, and Foundry 1.31 removed that flag, so the build fails with `FoundryNotFoundError`.
+:::
 
 ## Wagmi + Solidity imports
 
